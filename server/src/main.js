@@ -20,6 +20,7 @@ app.engine("hbs", handlebars.engine({
 app.set("views", path.join(__dirname, "views"))
 
 initializePassport(passport);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(session({
