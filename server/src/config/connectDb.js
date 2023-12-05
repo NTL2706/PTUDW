@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import ENV from "./configEnv.js"
+import dotConfig from "./configEnv.js"
 
-mongoose.connect(ENV.MONGOURL).then(() => {
+mongoose.connect(dotConfig.MONGOURL).then(() => {
     console.log(`connected to db`);
 });

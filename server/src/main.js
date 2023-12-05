@@ -1,4 +1,4 @@
-import ENV from "./config/configEnv.js";
+import dotConfig from "./config/configEnv.js";
 import express from "express";
 import app_route from "./routers/index.js"
 import passport from "passport";
@@ -9,6 +9,7 @@ import "./config/connectDb.js";
 import { fileURLToPath } from 'url';
 import path from "path";
 
+const PORT = dotConfig.PORT || 5000;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
@@ -24,7 +25,7 @@ initializePassport(passport);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(session({
-    secret: ENV.SESSION_SECRET,
+    secret: dotConfig.SESSION_SECRET,
     saveUninitialized: false,
     resave: false
 }))
@@ -34,6 +35,7 @@ app.use(passport.session());
 
 app_route(app)
 
-app.listen(ENV.PORT || 5000, () => {
-    console.log(`connected to port ${ENV.PORT}`)
+
+app.listen(PORT, () => {
+    console.log(`connected to port ${PORT}`)
 })
