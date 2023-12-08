@@ -1,11 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Danh Sach Bien Quang Cao</title>
+    <title>OpenStreetMap with Leaflet</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <style>
+        #map {
+            height: 400px;
+        }
+    </style>
 </head>
+
 <body>
-    
+    <div id="map"></div>
+
+    <script>
+        var map = L.map('map').setView([10.7769, 106.7009], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        var markersData = [
+            { lat: 10.7805, lon: 106.6991, type: '<iconify-icon icon="ic:twotone-restaurant-menu" width="30" height="30"></iconify-icon>' },
+            { lat: 10.7761, lon: 106.7024, type: '<iconify-icon icon="ic:twotone-restaurant-menu" width="30" height="30"></iconify-icon>' },
+            { lat: 10.7823, lon: 106.6952, type: '<iconify-icon icon="ic:twotone-restaurant-menu" width="30" height="30"></iconify-icon>' },
+            { lat: 10.7707, lon: 106.6976, type: '<iconify-icon icon="ic:twotone-restaurant-menu" width="30" height="30"></iconify-icon>' },
+            { lat: 10.7679, lon: 106.6933, type: '<iconify-icon icon="ic:twotone-restaurant-menu" width="30" height="30"></iconify-icon>' },
+            { lat: 10.7847, lon: 106.6942, type: '<iconify-icon icon="ic:twotone-restaurant-menu" width="30" height="30"></iconify-icon>' },
+            { lat: 10.7891, lon: 106.7019, type: '<iconify-icon icon="ic:twotone-restaurant-menu" width="30" height="30"></iconify-icon>' }
+        ];
+
+        var openPopupMarker = null;
+
+        markersData.forEach(function (marker) {
+            var newMarker = L.marker([marker.lat, marker.lon], {
+                icon: L.divIcon({
+                    className: 'custom-div-icon',
+                    html: marker.type,
+                    iconSize: [30, 42],
+                    iconAnchor: [15, 42],
+                    popupAnchor: [0, -34],
+                })
+            }).addTo(map);
+
+            // Gọi API của Nominatim để lấy địa chỉ từ tọa độ khi nhấp vào marker
+            newMarker.on('click', function (e) {
+                $.ajax({
+                    url: `https://nominatim.openstreetmap.org/reverse?format=json&lat=${marker.lat}&lon=${marker.lon}`,
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function (response) {
+                        var address = response.display_name;
+                        openPopupMarker = newMarker;
+                        newMarker.bindPopup(address).openPopup();
+                    },
+                    error: function (error) {
+                        console.error('Error fetching address:', error);
+                    }
+                });
+            });
+        });
+
+        // Đóng popup khi click hoặc kéo chuột tới chỗ khác trên bản đồ
+        map.on('click', function (e) {
+            if (openPopupMarker) {
+                openPopupMarker.closePopup();
+                openPopupMarker = null;
+            }
+        });
+    </script>
 </body>
+
 </html>
