@@ -6,7 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OpenStreetMap with Leaflet</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
@@ -14,11 +17,22 @@
         #map {
             height: 400px;
         }
+
+        #info-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: white;
+            padding: 10px;
+            display: none;
+        }
     </style>
 </head>
 
 <body>
     <div id="map"></div>
+    <div id="info-container"></div>
 
     <script>
         var map = L.map('map').setView([10.7769, 106.7009], 13);
@@ -28,53 +42,56 @@
         }).addTo(map);
 
         var markersData = [
-            { lat: 10.7805, lon: 106.6991, type: '<iconify-icon icon="ic:twotone-restaurant-menu" width="30" height="30"></iconify-icon>' },
-            { lat: 10.7761, lon: 106.7024, type: '<iconify-icon icon="ic:twotone-restaurant-menu" width="30" height="30"></iconify-icon>' },
-            { lat: 10.7823, lon: 106.6952, type: '<iconify-icon icon="ic:twotone-restaurant-menu" width="30" height="30"></iconify-icon>' },
-            { lat: 10.7707, lon: 106.6976, type: '<iconify-icon icon="ic:twotone-restaurant-menu" width="30" height="30"></iconify-icon>' },
-            { lat: 10.7679, lon: 106.6933, type: '<iconify-icon icon="ic:twotone-restaurant-menu" width="30" height="30"></iconify-icon>' },
-            { lat: 10.7847, lon: 106.6942, type: '<iconify-icon icon="ic:twotone-restaurant-menu" width="30" height="30"></iconify-icon>' },
-            { lat: 10.7891, lon: 106.7019, type: '<iconify-icon icon="ic:twotone-restaurant-menu" width="30" height="30"></iconify-icon>' }
+            { lat: 10.7805, lon: 106.6991, type: 0, info: 'Information for Marker 1' },
+            { lat: 10.7761, lon: 106.7024, type: 1, info: 'Information for Marker 2' },
+            { lat: 10.7823, lon: 106.6952, type: 1, info: 'Information for Marker 3' },
+            { lat: 10.7707, lon: 106.6976, type: 0, info: 'Information for Marker 4' },
+            { lat: 10.7679, lon: 106.6933, type: 1, info: 'Information for Marker 5' },
+            { lat: 10.7847, lon: 106.6942, type: 0, info: 'Information for Marker 6' },
+            { lat: 10.7891, lon: 106.7019, type: 1, info: 'Information for Marker 7' }
         ];
 
         var openPopupMarker = null;
+        var markers = L.markerClusterGroup();
 
-        markersData.forEach(function (marker) {
-            var newMarker = L.marker([marker.lat, marker.lon], {
-                icon: L.divIcon({
-                    className: 'custom-div-icon',
-                    html: marker.type,
-                    iconSize: [30, 42],
-                    iconAnchor: [15, 42],
-                    popupAnchor: [0, -34],
-                })
-            }).addTo(map);
+        (async function () {
+            for (const marker of markersData) {
+                const newMarker = L.marker([marker.lat, marker.lon], {
+                    icon: L.divIcon({
+                        className: 'custom-div-icon',
+                        html: `<iconify-icon icon="mdi:advertisements" style="color: ${marker.type ? "green" : "red"};" width="40" height="40"></iconify-icon>`,
+                        iconSize: [60, 84],
+                        iconAnchor: [30, 84],
+                        popupAnchor: [-15, -80],
+                    })
+                });
 
-            // Gọi API của Nominatim để lấy địa chỉ từ tọa độ khi nhấp vào marker
-            newMarker.on('click', function (e) {
-                $.ajax({
-                    url: `https://nominatim.openstreetmap.org/reverse?format=json&lat=${marker.lat}&lon=${marker.lon}`,
-                    method: 'GET',
-                    dataType: 'json',
-                    success: function (response) {
-                        var address = response.display_name;
-                        openPopupMarker = newMarker;
-                        newMarker.bindPopup(address).openPopup();
-                    },
-                    error: function (error) {
-                        console.error('Error fetching address:', error);
+                newMarker.on('click', async function (e) {
+                    if (openPopupMarker !== newMarker) {
+                        try {
+                            const response = await $.ajax({
+                                url: `https://nominatim.openstreetmap.org/reverse?format=json&lat=${marker.lat}&lon=${marker.lon}`,
+                                method: 'GET',
+                                dataType: 'json'
+                            });
+
+                            const address = response.display_name;
+                            openPopupMarker = newMarker;
+                            newMarker.bindPopup(address).openPopup();
+
+                            // Update the info container
+                            $('#info-container').html(`<strong>${marker.info}</strong>`).show();
+                        } catch (error) {
+                            console.error('Error fetching address:', error);
+                        }
                     }
                 });
-            });
-        });
 
-        // Đóng popup khi click hoặc kéo chuột tới chỗ khác trên bản đồ
-        map.on('click', function (e) {
-            if (openPopupMarker) {
-                openPopupMarker.closePopup();
-                openPopupMarker = null;
+                markers.addLayer(newMarker);
             }
-        });
+        })();
+
+        map.addLayer(markers);
     </script>
 </body>
 
