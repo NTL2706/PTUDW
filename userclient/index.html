@@ -95,7 +95,18 @@
             padding: 12px;
             border-radius: 12px;
             min-height: 25px;
+            overflow: hidden;
+            transform-origin: top;
+            height: 0;
+            transition: height 1s ease;
         }
+
+
+        #ad_info.active,
+        #map_info.active {
+            height: 100%;
+        }
+
 
         #ad_info {
             background-color: #D1E9FC;
@@ -110,16 +121,20 @@
         .informflex {
             display: flex;
             flex-direction: column;
-            transform: all 0.3s ease;
+
+            height: fit-content;
+
         }
+
+
 
         button {
             padding: 12px;
             font-size: 16px;
-            background-color: transparent;
+            background-color: #D0342C;
             border-radius: 6px;
             cursor: pointer;
-            color: #D0342C;
+            color: white;
             border: 2px solid #D0342C;
             outline: none;
             transition: 0.3s;

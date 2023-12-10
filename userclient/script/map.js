@@ -62,19 +62,26 @@ $(document).ready(function () {
                     popupAnchor: [0, -40],
                 })
             });
-
-            newMarker.on('click', () => handleMarkerClick(newMarker, marker));
             markers.addLayer(newMarker);
-        }
+
+            newMarker.on('click', function () { handleMarkerClick(newMarker, marker) });
+        };
     })();
 
     async function handleMarkerClick(newMarker, marker) {
         if (!marker.isDataFetched) {
             try {
                 const res = await $.ajax({
-                    url: `https://nominatim.openstreetmap.org/reverse?format=json&lat=${marker.lat}&lon=${marker.lon}&accept-language=vi`,
+                    url: `https://nominatim.openstreetmap.org/reverse`,
+                    data: {
+                        format: 'json',
+                        lat: marker.lat,
+                        lon: marker.lon,
+                        'accept-language': 'vi'
+                    },
                     method: 'GET',
-                    dataType: 'json'
+                    dataType: 'json',
+                    timeout: 10000,
                 });
 
                 marker.response = res;
@@ -104,9 +111,12 @@ $(document).ready(function () {
             );
         }
 
-        newMarker.bindPopup(`<strong>${marker.info.htqc}</strong><br><br>${checkPlace(marker.response)}<br><br>${marker.response.display_name}<br><br><strong>${marker.type ? 'ĐÃ QUY HOẠCH' : 'CHƯA QUY HOẠCH'}</strong>`).openPopup();
+        console.log(marker)
+        newMarker.bindPopup(`<strong>${marker.info.htqc}</strong><br><br>${checkPlace(marker.response)}<br><br>${marker.response.display_name}<br><br><strong>${marker.type ? 'ĐÃ QUY HOẠCH' : 'CHƯA QUY HOẠCH'}</strong>`)
+        newMarker.openPopup();
         $('#ad_info').html(thongtinAd()).show();
         $('#map_info').html('Chọn 1 điểm bất kỳ trên bản đồ').show();
+
     }
 
 
@@ -142,7 +152,7 @@ $(document).ready(function () {
                             <iconify-icon icon="carbon:information" style="color: "#2065D1" width="20" height="20"></iconify-icon>
                             <h4> Thông tin địa điểm</h4 >
                         </div >
-                        <div style="margin-top: 24px"><strong>${address} trụ/bảng</strong></div>
+                        <div style="margin-top: 24px"><strong>${address}</strong></div>
                         <button style="margin-top: 12px">  <iconify-icon icon="ri:alert-fill" style="color: "#D0342C" width="20" height="20"></iconify-icon>Báo cáo vi phạm</button>
                     </div>
                 `
