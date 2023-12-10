@@ -8,91 +8,167 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="./script/map.js"></script>
 
     <style>
-        #map {
-            height: 400px;
+        * {
+            margin: 0;
+            padding: 0;
         }
 
-        #info-container {
-            position: absolute;
-            bottom: 0;
-            left: 0;
+        .container {
+            width: calc(100% - 24px);
+            margin: 12px;
+            height: calc(100vh - 24px);
+            min-height: 700px;
+        }
+
+        .flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .map_container {
+            width: 70%;
+            height: 100%;
+            position: relative;
+        }
+
+        .map_cover {
+            height: 90%;
+            min-height: 500px;
             width: 100%;
-            background-color: white;
-            padding: 10px;
-            display: none;
+            border-radius: 12px;
+            outline: 3px solid #2a2a2a;
+            overflow: hidden;
+        }
+
+        #map {
+            height: 100%;
+            min-height: 500px;
+            width: 100%;
+        }
+
+        .instruction {
+            height: 10%;
+            width: 100%;
+
+        }
+
+        .informflex img {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border-radius: 2%;
+            margin-top: 6px;
+        }
+
+        span {
+            font-family: 'Roboto', sans-serif;
+        }
+
+        h4 {
+            font-family: 'Lato', sans-serif;
+        }
+
+        .info_container {
+            display: flex;
+            flex-direction: column;
+            align-self: flex-start;
+            width: 30%;
+            height: 90%;
+            min-height: 500px;
+            gap: 12px;
+        }
+
+        #ad_info,
+        #map_info {
+            padding: 12px;
+            border-radius: 12px;
+            min-height: 25px;
+        }
+
+        #ad_info {
+            background-color: #D1E9FC;
+            color: #2065D1;
+        }
+
+        #map_info {
+            background-color: #FFE9D5;
+            color: #B71D18;
+        }
+
+        .informflex {
+            display: flex;
+            flex-direction: column;
+            transform: all 0.3s ease;
+        }
+
+        button {
+            padding: 12px;
+            font-size: 16px;
+            background-color: transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            color: #D0342C;
+            border: 2px solid #D0342C;
+            outline: none;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        button:hover {
+            background-color: #ffc2c2;
         }
     </style>
 </head>
 
 <body>
-    <div id="map"></div>
-    <div id="info-container"></div>
+    <div class="container flex">
+        <div class="map_container">
+            <div class="map_cover">
+                <div id="map"></div>
+            </div>
 
-    <script>
-        var map = L.map('map').setView([10.7769, 106.7009], 13);
+            <div class="instruction flex">
+                <div class="flex">
+                    <iconify-icon icon="material-symbols:personal-places-rounded" style="color:#2065D1" width="40"
+                        height="40"></iconify-icon>
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
+                    <span>Điểm đã quy hoạch</span>
+                </div>
+                <div class="flex">
+                    <iconify-icon icon="material-symbols:personal-places-rounded" style="color: #5119B7" width="40"
+                        height="40"></iconify-icon>
+                    <span>Điểm chưa quy hoạch</span>
+                </div>
+                <div class="flex">
+                    <iconify-icon icon="mdi:map-marker-radius" style="color: #b71d18" width="40"
+                        height="40"></iconify-icon>
+                    <span>Điểm đang chọn</span>
+                </div>
+            </div>
+        </div>
 
-        var markersData = [
-            { lat: 10.7805, lon: 106.6991, type: 0, info: 'Information for Marker 1' },
-            { lat: 10.7761, lon: 106.7024, type: 1, info: 'Information for Marker 2' },
-            { lat: 10.7823, lon: 106.6952, type: 1, info: 'Information for Marker 3' },
-            { lat: 10.7707, lon: 106.6976, type: 0, info: 'Information for Marker 4' },
-            { lat: 10.7679, lon: 106.6933, type: 1, info: 'Information for Marker 5' },
-            { lat: 10.7847, lon: 106.6942, type: 0, info: 'Information for Marker 6' },
-            { lat: 10.7891, lon: 106.7019, type: 1, info: 'Information for Marker 7' }
-        ];
+        <div class="info_container">
+            <div id="ad_info" class="flex">Chọn 1 điểm quảng cáo trên bản đồ</div>
+            <div id="map_info" class="flex">Chọn 1 điểm bất kì trên bản đồ</div>
+        </div>
+    </div>
 
-        var openPopupMarker = null;
-        var markers = L.markerClusterGroup();
 
-        (async function () {
-            for (const marker of markersData) {
-                const newMarker = L.marker([marker.lat, marker.lon], {
-                    icon: L.divIcon({
-                        className: 'custom-div-icon',
-                        html: `<iconify-icon icon="mdi:advertisements" style="color: ${marker.type ? "green" : "red"};" width="40" height="40"></iconify-icon>`,
-                        iconSize: [60, 84],
-                        iconAnchor: [30, 84],
-                        popupAnchor: [-15, -80],
-                    })
-                });
-
-                newMarker.on('click', async function (e) {
-                    if (openPopupMarker !== newMarker) {
-                        try {
-                            const response = await $.ajax({
-                                url: `https://nominatim.openstreetmap.org/reverse?format=json&lat=${marker.lat}&lon=${marker.lon}`,
-                                method: 'GET',
-                                dataType: 'json'
-                            });
-
-                            const address = response.display_name;
-                            openPopupMarker = newMarker;
-                            newMarker.bindPopup(address).openPopup();
-
-                            // Update the info container
-                            $('#info-container').html(`<strong>${marker.info}</strong>`).show();
-                        } catch (error) {
-                            console.error('Error fetching address:', error);
-                        }
-                    }
-                });
-
-                markers.addLayer(newMarker);
-            }
-        })();
-
-        map.addLayer(markers);
-    </script>
 </body>
 
 </html>
