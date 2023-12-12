@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OpenStreetMap with Leaflet</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lato&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="./script/map.js"></script>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      .container {
+        width: calc(100% - 24px);
+        margin: 12px;
+        height: calc(100vh - 24px);
+        min-height: 700px;
+      }
+
+      .flex {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .map_container {
+        width: 70%;
+        height: 100%;
+        position: relative;
+      }
+
+      .map_cover {
+        height: 90%;
+        min-height: 500px;
+        width: 100%;
+        border-radius: 12px;
+        outline: 3px solid #2a2a2a;
+        overflow: hidden;
+      }
+
+      #map {
+        height: 100%;
+        min-height: 500px;
+        width: 100%;
+      }
+
+      .instruction {
+        height: 10%;
+        width: 100%;
+      }
+
+      .informflex img {
+        width: 100%;
+        height: 90%;
+        border-radius: 2%;
+        margin-top: 6px;
+      }
+
+      span {
+        font-family: "Roboto", sans-serif;
+      }
+
+      h1 {
+        font-family: "Roboto", sans-serif;
+      }
+
+      #info_container {
+        display: none;
+        flex-direction: column;
+        align-self: flex-start;
+        width: 30%;
+        height: 90%;
+        min-height: 500px;
+        gap: 12px;
+      }
+
+      #info_container.active {
+        display: flex;
+      }
+
+      #ad_info,
+      #map_info {
+        padding: 12px;
+        border-radius: 12px;
+        min-height: 25px;
+        overflow: hidden;
+        transform-origin: top;
+        height: 0;
+        transition: height 1s ease;
+      }
+
+      #ad_info.active {
+        height: 100%;
+      }
+
+      #map_info.active {
+        height: 20%;
+      }
+
+      #ad_info {
+        background-color: #d1e9fc;
+        color: #2065d1;
+      }
+
+      #map_info {
+        background-color: #ffe9d5;
+        color: #b71d18;
+      }
+
+      .informflex {
+        display: grid;
+        width: 100%;
+        grid-template-rows: repeat(1.2fr 1fr 1fr 1fr 1fr 1fr 3fr 0.5fr);
+        gap: 6px;
+        height: 100%;
+      }
+
+      button {
+        padding: 6px;
+        font-size: 16px;
+        background-color: #d0342c;
+        border-radius: 6px;
+        cursor: pointer;
+        color: white;
+        border: 2px solid #d0342c;
+        outline: none;
+        transition: 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        max-height: 50px;
+      }
+
+      button:hover {
+        background-color: #ffc2c2;
+      }
+
+      #form_container {
+        display: none;
+        flex-direction: column;
+        align-self: flex-start;
+        width: 30%;
+        height: 40%;
+      }
+
+      #form_container.active {
+        display: flex;
+      }
+
+    </style>
+  </head>
+
+  <body>
+    <div class="container flex">
+      <div class="map_container">
+        <div class="map_cover">
+          <div id="map"></div>
+        </div>
+
+        <div class="instruction flex">
+          <div class="flex">
+            <iconify-icon
+              icon="material-symbols:personal-places-rounded"
+              style="color: #2065d1"
+              width="40"
+              height="40"
+            ></iconify-icon>
+
+            <span>Điểm đã quy hoạch</span>
+          </div>
+          <div class="flex">
+            <iconify-icon
+              icon="material-symbols:personal-places-rounded"
+              style="color: #5119b7"
+              width="40"
+              height="40"
+            ></iconify-icon>
+            <span>Điểm chưa quy hoạch</span>
+          </div>
+          <div class="flex">
+            <iconify-icon
+              icon="mdi:map-marker-radius"
+              style="color: #b71d18"
+              width="40"
+              height="40"
+            ></iconify-icon>
+            <span>Điểm đang chọn</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="info_container" class="active">
+        <div id="ad_info" class="flex">Chọn 1 điểm quảng cáo trên bản đồ</div>
+        <div id="map_info" class="flex">Chọn 1 điểm bất kì trên bản đồ</div>
+      </div>
+      <div id="form_container">
+      </div>
+    </div>
+  </body>
+</html>
