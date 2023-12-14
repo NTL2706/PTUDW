@@ -1,10 +1,10 @@
-import {Router} from "express";
-import {register} from "../controller/authController.js";
+import { Router } from "express";
+import { register } from "../controllers/authController.js";
 import passport from "passport";
 const route = Router();
 
-route.post("/login",passport.authenticate("local", {
-    successRedirect:'/',
+route.post("/login", passport.authenticate("local", {
+    successRedirect: '/',
     failureRedirect: '/login',
     failureMessage: true
 }));
