@@ -17,6 +17,12 @@ const app = express();
 app.set("view engine", "hbs");
 app.engine("hbs", handlebars.engine({
     extname: ".hbs",
+    helpers: {
+        eq: (val1, val2) => {
+            console.log(val1, val2);
+            return val1 === val2;
+        }
+    }
 }))
 app.set("views", path.join(__dirname, "views"))
 
