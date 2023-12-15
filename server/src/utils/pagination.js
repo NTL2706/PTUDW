@@ -7,7 +7,6 @@ function pagination(totalPage, currentPage) {
         startPage = 1;
     }
     let endPage = startPage + pagesToShow - 1;
-
     if (endPage > totalPage) {
         endPage = totalPage;
         startPage = endPage - pagesToShow + 1;

@@ -237,7 +237,7 @@
                                                                 View/Edit</a>
 
                                                             {{#if (eq "admin" ../role)}}
-                                                                <a class="dropdown-item" href="/ads/delete?id={{this._id}}"><i
+                                                                <a class="dropdown-item" href="javascript:void(0);"><i
                                                                         class="mdi mdi-trash-can-outline me-1"></i>
                                                                     Delete</a>
                                                             {{/if}}
@@ -255,7 +255,7 @@
                                        <ul class="pagination">
                                             {{#each pages}}
                                                 <li class="page-item">
-                                                    <a class="page-link" href="/ads/view?page={{this}}">{{this}}</a>
+                                                    <a class="page-link" href="javascript:void(0);">{{this}}</a>
                                                 </li>
                                             {{/each}}
                                         
