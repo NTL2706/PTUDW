@@ -811,16 +811,21 @@
                     class="card-header d-flex justify-content-between align-items-center"
                   >
                     <h5 class="mb-0">Form advertising sign</h5>
-                    <small class="text-muted float-end">ID: </small>
+                    <small class="text-muted float-end">ID:
+                      {{advertisement._id}}</small>
                   </div>
                   <div class="card-body">
-                    <form>
+                    <form
+                      method="POST"
+                      action="/ads/edit?id={{advertisement._id}}"
+                    >
                       <div class="form-floating form-floating-outline mb-4">
                         <input
                           type="text"
                           class="form-control"
                           id="basic-default-fullname"
-                          placeholder="John Doe"
+                          value="{{advertisement.type}}"
+                          name="type"
                         />
                         <label for="basic-default-fullname">Type</label>
                       </div>
@@ -829,7 +834,8 @@
                           type="text"
                           class="form-control"
                           id="basic-default-company"
-                          placeholder="ACME Inc."
+                          value="{{advertisement.height}}"
+                          name="height"
                         />
                         <label for="basic-default-company">Height</label>
                       </div>
@@ -840,43 +846,49 @@
                               type="text"
                               id="basic-default-email"
                               class="form-control"
-                              placeholder="john.doe"
+                              value="{{advertisement.width}}"
                               aria-label="john.doe"
                               aria-describedby="basic-default-email2"
+                              name="width"
                             />
                             <label for="basic-default-email">Width</label>
                           </div>
+                        </div>
                       </div>
                       <div class="form-floating form-floating-outline mb-4">
                         <input
-                          type="text"
-                          id="basic-default-phone"
-                          class="form-control phone-mask"
-                          placeholder="658 799 8941"
+                          class="form-control"
+                          type="datetime-local"
+                          id="html5-datetime-local-input"
+                          value="{{advertisement.start_date}}"
+                          name="start_date"
                         />
-                        <label for="basic-default-phone">Start date</label>
+                        <label for="html5-datetime-local-input">Start date</label>
                       </div>
                       <div class="form-floating form-floating-outline mb-4">
                         <input
-                          type="text"
-                          id="basic-default-phone"
-                          class="form-control phone-mask"
-                          placeholder="658 799 8941"
+                          class="form-control"
+                          type="datetime-local"
+                          id="html5-datetime-local-input"
+                          value="{{advertisement.end_date}}"
+                          name="end_date"
                         />
-                        <label for="basic-default-phone">End date</label>
+                        <label for="html5-datetime-local-input">End date</label>
                       </div>
                       <div class="form-floating form-floating-outline mb-4">
                         <textarea
                           id="basic-default-message"
                           class="form-control"
-                          placeholder="Hi, Do you have a moment to talk Joe?"
                           style="height: 60px"
-                        ></textarea>
+                          name="content"
+                        >{{advertisement.content}}</textarea>
                         <label for="basic-default-message">Content</label>
                       </div>
-                      <button type="submit" class="btn btn-primary">
-                        Send
-                      </button>
+                      {{#if (eq "admin" role)}}
+                        <button type="submit" class="btn btn-primary">
+                          Edit
+                        </button>
+                      {{/if}}
                     </form>
                   </div>
                 </div>
