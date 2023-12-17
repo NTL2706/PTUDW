@@ -1,6 +1,10 @@
 import { Router } from "express";
-import { register } from "../../controllers/authController.js";
+import {
+    register,
+    createAccount,
+} from "../../controllers/authController.js";
 import passport from "passport";
+import { districtModel } from "../../models/districtModel.js";
 
 const route = Router();
 
@@ -28,6 +32,31 @@ route.post("/login", passport.authenticate("local", {
 //         res.redirect('/');;
 //     }
 // })
-route.post("/register", register)
+route.post("/register", register);
 
+route.get("/create-account-district", async (req, res) => {
+    if (!req.user || req.user.role !== "admin")
+        return res.render("auth/login");
+
+    try {
+        const district = await districtModel.find().select("_id name").lean();
+        return res.render("auth/createAccountDistrict", { district });
+    } catch (error) {
+        console.log(error)
+        return res.redirect("/")
+    }
+})
+route.get("/create-account-ward", async (req, res) => {
+    if (!req.user || req.user.role !== "admin")
+        return res.render("auth/login");
+
+    try {
+        const district = await districtModel.find().select("_id name").lean();
+        return res.render("auth/createAccountWard", { district });
+    } catch (error) {
+        console.log(error)
+        return res.redirect("/")
+    }
+})
+route.post("/create-account", createAccount);
 export default route;

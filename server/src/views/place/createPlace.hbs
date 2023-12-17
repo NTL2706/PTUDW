@@ -643,30 +643,28 @@
                             <div class="col-xl">
                                 <div class="card mb-4">
                                     <div class="card-header d-flex justify-content-between align-items-center">
-                                        <h5 class="mb-0">Form place advertising sign</h5>
-                                        <small class="text-muted float-end">ID:
-                                            {{placeAds._id}}</small>
+                                        <h5 class="mb-0">Create place advertising sign</h5>
                                     </div>
                                     <div class="card-body">
-                                        <form method="POST" action="/place/edit?id={{placeAds._id}}">
+                                        <form method="POST" action="/place/create">
                                             <div class="form-floating form-floating-outline mb-4">
                                                 <input type="text" class="form-control" id="basic-default-fullname"
-                                                    value="{{placeAds.type}}" name="type" />
+                                                    value="" name="type" />
                                                 <label for="basic-default-fullname">Type</label>
                                             </div>
                                             <div class="form-floating form-floating-outline mb-4">
                                                 <input type="text" class="form-control" id="basic-default-fullname"
-                                                    value="{{placeAds.address}}" name="address" />
+                                                    value="" name="address" />
                                                 <label for="basic-default-fullname">Address</label>
                                             </div>
                                             <div class="form-floating form-floating-outline mb-4">
                                                 <input type="text" class="form-control" id="basic-default-company"
-                                                    value="{{placeAds.long}}" name="long" />
+                                                    value="" name="long" />
                                                 <label for="basic-default-company">Long</label>
                                             </div>
                                             <div class="form-floating form-floating-outline mb-4">
                                                 <input type="text" class="form-control" id="basic-default-company"
-                                                    value="{{placeAds.lat}}" name="lat" />
+                                                    value="" name="lat" />
                                                 <label for="basic-default-company">Lat</label>
                                             </div>
                                             <div class="form-floating form-floating-outline mb-4">
@@ -687,11 +685,9 @@
                                                     advertising sign</label>
                                             </div>
 
-                                            {{#if (eq "admin" role)}}
-                                                <button type="submit" class="btn btn-primary">
-                                                    Edit
-                                                </button>
-                                            {{/if}}
+                                            <button type="submit" class="btn btn-primary">
+                                                Create
+                                            </button>
                                         </form>
                                     </div>
                                 </div>
