@@ -125,37 +125,37 @@ $(document).ready(function () {
   ).addTo(map);
 
   var markers = L.markerClusterGroup();
-  var clickMarkerLayer = L.layerGroup().addTo(map); // Added a new layer for click markers
+  var clickMarkerLayer = L.layerGroup().addTo(map);
 
   const markersDataWithFetchStatus = markersData.map((marker) => ({
     ...marker,
     isDataFetched: false,
   }));
 
-  (async function () {
-    for (const marker of markersDataWithFetchStatus) {
-      const newMarker = L.marker([marker.lat, marker.lon], {
-        icon: L.divIcon({
-          className: "custom-div-icon",
-          html: `<iconify-icon icon="material-symbols:personal-places-rounded" style="color: ${
-            marker.type ? "#2065D1" : "#5119B7"
+  for (const marker of markersDataWithFetchStatus) {
+    const newMarker = L.marker([marker.lat, marker.lon], {
+      icon: L.divIcon({
+        className: "custom-div-icon",
+        html: `<iconify-icon icon="material-symbols:personal-places-rounded" style="color: ${marker.type ? "#2065D1" : "#5119B7"
           };" width="40" height="40"></iconify-icon>`,
-          iconSize: [40, 40],
-          iconAnchor: [15, 40],
-          popupAnchor: [0, -40],
-        }),
-      });
-      markers.addLayer(newMarker);
+        iconSize: [40, 40],
+        iconAnchor: [15, 40],
+        popupAnchor: [0, -40],
+      }),
+    });
+    markers.addLayer(newMarker);
 
-      newMarker.on("click", function () {
-        handleMarkerClick(newMarker, marker);
-      });
-    }
-  })();
+    newMarker.on("click", function () {
+      handleMarkerClick(newMarker, marker);
+    });
+  }
 
-  async function handleMarkerClick(newMarker, marker) {
+
+  async function fetchData(marker) {
+
     try {
       if (!marker.isDataFetched) {
+        $("#ad_info").html("Đang tải...").show();
         const res = await $.ajax({
           url: `https://nominatim.openstreetmap.org/reverse`,
           data: {
@@ -172,53 +172,69 @@ $(document).ready(function () {
         marker.response = res;
         marker.isDataFetched = true;
       }
+    } catch (error) {
+      console.error("Error fetching address:", error);
+    }
+  }
 
-      newMarker.on("popupclose", function () {
-        $("#ad_info").html("Chọn 1 điểm quảng cáo trên bản đồ").show();
-        $("#ad_info").removeClass("active");
+  var previousMarkerState = null
+
+  async function handleMarkerClick(newMarker, marker) {
+
+    fetchData(marker).then(() => {
+      const thongtinAd = `<div class="informflex">
+      <div class="flex">
+          <iconify-icon icon="carbon:information" style="color: "#2065D1" width="30" height="30"></iconify-icon>
+          <h1 style="color: '#2065D1'">Thông tin địa điểm quảng cáo</h1>
+      </div>
+      <h2 style="margin-top: 24px">${marker.info.qc.kqc}</h2>
+      <div style="opacity: 0.8">${marker.response.display_name
+        }</div>
+      <div>Kích thước: <strong>${marker.info.qc.kt.dai
+        }m x ${marker.info.qc.kt.rong}m </strong></div>
+      <div>Số lượng: <strong>${marker.info.qc.sl
+        } trụ/bảng</strong></div>
+      <div >Phân loại: <strong>${checkPlace(
+          marker.response
+        )} trụ/bảng</strong></div>
+      <div class="imagediv">Hình ảnh: <img src=${marker.info.haqc
+        }></div>
+      <button id="reportViolationBtn">  <iconify-icon icon="ri:alert-fill" style="color: "#D0342C" width="20" height="20"></iconify-icon>Báo cáo vi phạm</button>
+  </div>`;
+
+
+
+
+      function isEqual(obj1, obj2) {
+        return JSON.stringify(obj1) === JSON.stringify(obj2);
+      }
+
+      if (!isEqual(marker, previousMarkerState)) {
+        $("#ad_info").html(thongtinAd).show();
+
+        if (!$("#ad_info").hasClass("active")) {
+          $("#map_info").html("Chọn 1 điểm bất kỳ trên bản đồ").show();
+          $("#map_info").removeClass("active");
+          $("#ad_info").addClass("active");
+        }
+
+      }
+
+      $("#reportViolationBtn").click(function () {
+        createReportForm();
       });
 
-      const thongtinAd = () => {
-        return `<div class="informflex">
-                        <div class="flex">
-                            <iconify-icon icon="carbon:information" style="color: "#2065D1" width="30" height="30"></iconify-icon>
-                            <h1 style="color: '#2065D1'">Thông tin địa điểm quảng cáo</h1>
-                        </div>
-                        <h2 style="margin-top: 24px">${marker.info.qc.kqc}</h2>
-                        <div style="opacity: 0.8">${
-                          marker.response.display_name
-                        }</div>
-                        <div style="">Kích thước: <strong>${
-                          marker.info.qc.kt.dai
-                        }m x ${marker.info.qc.kt.rong}m </strong></div>
-                        <div style="">Số lượng: <strong>${
-                          marker.info.qc.sl
-                        } trụ/bảng</strong></div>
-                        <div style="">Phân loại: <strong>${checkPlace(
-                          marker.response
-                        )} trụ/bảng</strong></div>
-                        <div class="imagediv">Hình ảnh: <img src=${
-                          marker.info.haqc
-                        }></div>
-                        <button style="">  <iconify-icon icon="ri:alert-fill" style="color: "#D0342C" width="20" height="20"></iconify-icon>Báo cáo vi phạm</button>
-                    </div>`;
-      };
-
-      $("#ad_info").addClass("active");
-      $("#ad_info").html(thongtinAd()).show();
-      $("#map_info").html("Chọn 1 điểm bất kỳ trên bản đồ").show();
       newMarker
         .bindPopup(
           `<strong>${marker.info.htqc}</strong><br><br>${checkPlace(
             marker.response
-          )}<br><br>${marker.response.display_name}<br><br><strong>${
-            marker.type ? "ĐÃ QUY HOẠCH" : "CHƯA QUY HOẠCH"
+          )}<br><br>${marker.response.display_name}<br><br><strong>${marker.type ? "ĐÃ QUY HOẠCH" : "CHƯA QUY HOẠCH"
           }</strong>`
         )
         .openPopup();
-    } catch (error) {
-      console.error("Error fetching address:", error);
-    }
+
+      previousMarkerState = { ...marker };
+    });
   }
 
   map.on("click", async function (e) {
@@ -233,13 +249,10 @@ $(document).ready(function () {
       }),
     });
 
-    // Add the click marker to the dedicated layer
     clickMarkerLayer.clearLayers().addLayer(clickMarker);
 
-    // Show loading message
     $("#map_info").html("Đang tải...").show();
 
-    // Then query for address
     try {
       const response = await $.ajax({
         url: `https://nominatim.openstreetmap.org/reverse?format=json&lat=${e.latlng.lat}&lon=${e.latlng.lng}&accept-language=vi`,
@@ -249,27 +262,26 @@ $(document).ready(function () {
 
       address = response.display_name;
 
-      clickMarker.on("popupclose", function () {
-        $("#map_info").html("Chọn 1 điểm bất kỳ trên bản đồ").show();
-        $("#map_info").removeClass("active");
-      });
-
-      // Update the info container
-
-      const thongtinMap = () => {
-        return `<div class="informflex">
+      const thongtinMap =
+        `<div class="informflex" id="informflex">
                     <div class="flex">
                         <iconify-icon icon="carbon:information" style="color: "#2065D1" width="20" height="20"></iconify-icon>
                         <h2> Thông tin địa điểm</h2>
                     </div >
                     <div style="margin-top: 24px"><strong>${address}</strong></div>
-                    <button style="">  <iconify-icon icon="ri:alert-fill" style="color: "#D0342C" width="20" height="20"></iconify-icon>Báo cáo vi phạm</button>
+                    <button id="reportViolationBtn">  <iconify-icon icon="ri:alert-fill" style="color: "#D0342C" width="20" height="20"></iconify-icon>Báo cáo vi phạm</button>
                 </div>
             `;
-      };
+
 
       $("#ad_info").html("Chọn 1 điểm quảng cáo trên bản đồ").show();
-      $("#map_info").html(thongtinMap()).show();
+      $("#ad_info").removeClass("active");
+      $("#map_info").html(thongtinMap).show();
+
+      $("#reportViolationBtn").click(function () {
+        createReportForm();
+      });
+
       clickMarker
         .bindPopup(`${checkPlace(response)}<br><br>${address}<br><br>`)
         .openPopup();
@@ -281,3 +293,26 @@ $(document).ready(function () {
 
   map.addLayer(markers);
 });
+
+
+function createReportForm() {
+  const formHTML = `
+    <form id="reportForm">
+      <!-- Your form fields go here -->
+      <label for="reason">Lý do báo cáo:</label>
+      <textarea id="reason" name="reason" rows="4" cols="50"></textarea>
+      <br>
+      <input type="submit" value="Gửi báo cáo">
+    </form>
+  `;
+
+  $("#informflex").removeClass("active");
+  $("#form_container").addClass("active");
+  $("#form_container").html(formHTML);
+
+  // Attach submit event for the report form
+  $("#reportForm").submit(function (event) {
+    event.preventDefault();
+    alert("Báo cáo đã được gửi đi!");
+  });
+}

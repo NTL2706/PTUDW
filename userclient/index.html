@@ -75,6 +75,10 @@
         width: 100%;
       }
 
+      #informflex.active {
+        display: block;
+      } 
+
       .informflex img {
         width: 100%;
         height: 90%;
@@ -156,6 +160,13 @@
       button:hover {
         background-color: #ffc2c2;
       }
+
+      .form_container {
+        overflow: hidden;
+        display: none;
+        width: 0;
+        height: 0;
+      }
     </style>
   </head>
 
@@ -201,6 +212,8 @@
       <div class="info_container">
         <div id="ad_info" class="flex">Chọn 1 điểm quảng cáo trên bản đồ</div>
         <div id="map_info" class="flex">Chọn 1 điểm bất kì trên bản đồ</div>
+      </div>
+      <div id="form_container">
       </div>
     </div>
   </body>
