@@ -209,16 +209,14 @@ $(document).ready(function () {
         return JSON.stringify(obj1) === JSON.stringify(obj2);
       }
 
-      if (!isEqual(marker, previousMarkerState)) {
+
+      if (!$("#ad_info").hasClass("active") || !isEqual(marker, previousMarkerState)) {
+        $("#map_info").html("Chọn 1 điểm bất kỳ trên bản đồ").show();
+        $("#map_info").removeClass("active");
+        $("#ad_info").addClass("active");
         $("#ad_info").html(thongtinAd).show();
-
-        if (!$("#ad_info").hasClass("active")) {
-          $("#map_info").html("Chọn 1 điểm bất kỳ trên bản đồ").show();
-          $("#map_info").removeClass("active");
-          $("#ad_info").addClass("active");
-        }
-
       }
+
 
       $("#reportViolationBtn").click(function () {
         createReportForm();
@@ -263,7 +261,7 @@ $(document).ready(function () {
       address = response.display_name;
 
       const thongtinMap =
-        `<div class="informflex" id="informflex">
+        `<div class="informflex">
                     <div class="flex">
                         <iconify-icon icon="carbon:information" style="color: "#2065D1" width="20" height="20"></iconify-icon>
                         <h2> Thông tin địa điểm</h2>
@@ -302,11 +300,11 @@ function createReportForm() {
       <label for="reason">Lý do báo cáo:</label>
       <textarea id="reason" name="reason" rows="4" cols="50"></textarea>
       <br>
-      <input type="submit" value="Gửi báo cáo">
+      <input type="submit" class="submit" value="Gửi báo cáo">
     </form>
   `;
 
-  $("#informflex").removeClass("active");
+  $("#info_container").removeClass("active");
   $("#form_container").addClass("active");
   $("#form_container").html(formHTML);
 
