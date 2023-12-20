@@ -19,6 +19,11 @@ async function placeAdsAPI(req, res) {
     }
 }
 
+async function reportAPI(req, res) {
+    return res.status(200).json({ msg: "success" });
+}
+
 export {
-    placeAdsAPI
+    placeAdsAPI,
+    reportAPI
 }
