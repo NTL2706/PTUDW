@@ -7,6 +7,7 @@ import session from "express-session";
 import handlebars from "express-handlebars"
 import "./configs/connectDb.js";
 import { fileURLToPath } from 'url';
+import cors from "cors";
 import path from "path";
 
 const PORT = dotConfig.PORT || 5000;
@@ -24,7 +25,7 @@ app.engine("hbs", handlebars.engine({
     }
 }))
 app.set("views", path.join(__dirname, "views"))
-
+app.use(cors())
 initializePassport(passport);
 
 app.use(express.json());
@@ -40,7 +41,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app_route(app)
-
 
 app.listen(PORT, () => {
     console.log(`connected to port ${PORT}`)
