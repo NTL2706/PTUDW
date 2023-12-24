@@ -8,7 +8,10 @@ async function placeAdsAPI(req, res) {
     try {
         const placeAds = await placeModel
             .find({}, projection).lean()
-            .populate('ads')
+            .populate({
+                path: 'ads.ad',
+                model: 'Ads',
+            })
             .exec();
 
         return res.status(200).json({ "data": placeAds });
