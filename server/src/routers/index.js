@@ -1,8 +1,8 @@
-import authRoute from "./authRoute.js"
+import authRoute from "./auth/authRoute.js"
 import pageRoute from "./pageRoute.js"
-function app_route(app){
+function app_route(app) {
     app.use("/", pageRoute)
-    app.use("/auth",authRoute);    
+    app.use("/auth", authRoute);
 }
 
 export default app_route;

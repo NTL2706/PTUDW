@@ -1,19 +1,18 @@
-import bcrypt from "bcrypt"
-import { userModel, User } from "../models/userModel.js"
-import { ErrorHandling } from "../error.js"
-import dotConfig from "../configs/configEnv.js"
+import bcrypt from "bcrypt";
+import { userModel, User } from "../models/userModel.js";
+import { ErrorHandling } from "../error.js";
+import dotConfig from "../configs/configEnv.js";
 
 export async function register(req, res) {
-    const { name, dayofbirth: dataOfBirth, email, password, phone } = req.body;
+    const { name, email, password } = req.body;
+    console.log(req.body)
     const salt = bcrypt.genSaltSync(Number(dotConfig.SALTROUNDS));
     const hash = bcrypt.hashSync(password, salt);
     try {
         const user = new userModel({
             name: name,
-            dayOfBirth: dataOfBirth,
             email: email,
             password: hash,
-            phone: phone
         })
 
         await ErrorHandling(User, req.body);
