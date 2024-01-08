@@ -10,6 +10,9 @@ const Place = new Schema({
 
     ads: String,
 
+    ward: String,
+    district: String,
+
     is_deleted: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now }
 }, {
