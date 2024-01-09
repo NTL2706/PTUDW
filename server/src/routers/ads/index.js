@@ -7,6 +7,7 @@ const route = Router();
 
 route.get("/view", viewAds);
 route.get("/form", formAds)
-
+route.get("/delete", deleteAds);
+route.post("/edit", editAds);
 
 export default route;

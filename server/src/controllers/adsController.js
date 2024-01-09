@@ -58,4 +58,43 @@ async function formAds(req, res, next) {
 
 
 
-export { viewAds, formAds }
+async function editAds(req, res, next) {
+    const idAds = req.query.id;
+    const user = req.user;
+    const dataUpdate = req.body;
+    console.log(dataUpdate)
+
+    if (!user) {
+        return res.redirect("/auth/login");
+    }
+
+    dataUpdate.start_date = new Date(dataUpdate.start_date);
+    dataUpdate.end_date = new Date(dataUpdate.end_date);
+
+    try {
+        await adsModel.findByIdAndUpdate(idAds, dataUpdate);
+        return res.redirect(`/ads/form?id=${idAds}`);
+    } catch (error) {
+        console.log(error);
+        return res.redirect("/ads/view");
+    }
+}
+
+async function deleteAds(req, res, next) {
+    const idAds = req.query.id;
+    const user = req.user
+
+    if (!user) {
+        return res.redirect("/auth/login");
+    }
+
+    try {
+        await adsModel.findByIdAndDelete(idAds);
+        return res.redirect(`/ads/view`);
+    } catch (error) {
+        console.log(error);
+        return res.redirect("/ads/view");
+    }
+}
+
+export { viewAds, formAds, editAds, deleteAds }
