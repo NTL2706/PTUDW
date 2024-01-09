@@ -5,7 +5,6 @@ import dotConfig from "../configs/configEnv.js";
 
 export async function register(req, res) {
     const { name, email, password } = req.body;
-    console.log(req.body)
     const salt = bcrypt.genSaltSync(Number(dotConfig.SALTROUNDS));
     const hash = bcrypt.hashSync(password, salt);
     try {
