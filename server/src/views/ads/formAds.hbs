@@ -818,6 +818,7 @@
                     <form
                       method="POST"
                       action="/ads/edit?id={{advertisement._id}}"
+                      enctype="multipart/form-data"
                     >
                       <div class="form-floating form-floating-outline mb-4">
                         <input
@@ -883,6 +884,17 @@
                           name="content"
                         >{{advertisement.content}}</textarea>
                         <label for="basic-default-message">Content</label>
+                      </div>
+                      <div class="mb-3">
+                        <label for="formFile" class="form-label">Default file
+                          input example</label>
+                        <input
+                          class="form-control"
+                          type="file"
+                          id="formFile"
+                          name="image"
+                          multiple
+                        />
                       </div>
                       {{#if (eq "admin" role)}}
                         <button type="submit" class="btn btn-primary">

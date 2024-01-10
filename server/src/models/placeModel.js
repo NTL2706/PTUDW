@@ -8,7 +8,10 @@ const Place = new Schema({
     lat: Number,
     type: String,
 
-    ads: String,
+    ads: {
+        type: Schema.Types.ObjectId,
+        ref: 'Ads'
+    },
 
     ward: String,
     district: String,

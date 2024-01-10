@@ -1,68 +1,70 @@
+import { placeModel, Place } from "../models/placeModel.js";
 import { adsModel, Ads } from "../models/adsModel.js";
 import configEnv from "../configs/configEnv.js";
 import { pagination } from "../utils/pagination.js";
 import moment from 'moment';
 
-async function viewAds(req, res, next) {
+async function viewPlace(req, res, next) {
     const page = req.query.page || 1;
     const limit = configEnv.PAGE_SIZE;
-    const user = req.user;
+    const user = req.user || null;
 
     if (!user) {
         return res.redirect("/auth/login");
     }
 
     try {
-        const advertisements = await adsModel.find().lean()
+        const placeAds = await placeModel.find().lean()
             .sort({ created_at: -1 })
             .limit(limit)
-            .skip(limit * page - limit);
+            .skip(limit * page - limit)
+            .populate('ads')
+            .exec();
 
-        const countAds = await adsModel.countDocuments();
 
-        const totalPage = Math.ceil(countAds / limit);
+        const countPlace = await placeModel.countDocuments();
+
+        const totalPage = Math.ceil(countPlace / limit);
 
         const pages = pagination(totalPage, page)
-        // console.log(advertisements)
 
-        return res.render("ads/viewAds", { advertisements, pages, totalPage, role: user.role });
+        return res.render("place/viewPlace", { placeAds, pages, totalPage, role: user.role });
     }
     catch (error) {
         console.log(error)
-        return res.render("ads/viewAds")
+        return res.render("place/viewPlace")
     }
 }
 
-async function formAds(req, res, next) {
+async function formPlace(req, res, next) {
     const idAds = req.query.id;
     const user = req.user;
 
-    if (!user) {
-        return res.redirect("/auth/login");
-    }
+    // if (!user) {
+    //     return res.redirect("/auth/login");
+    // }
 
     try {
-        const advertisement = await adsModel.findById(idAds).lean();
+        const placeAds = await placeModel.findById(idAds).lean().populate('ads').exec();
+        const advertisements = await adsModel.find().select('_id type').lean();
 
-        if (advertisement) {
-            advertisement.start_date = moment(advertisement.start_date).format('YYYY-MM-DDTHH:mm:ss');
-            advertisement.end_date = moment(advertisement.end_date).format('YYYY-MM-DDTHH:mm:ss');
-
-            return res.render("ads/formAds", { advertisement, role: user.role });
+        if (placeAds) {
+            console.log(advertisements)
+            return res.render("place/formPlace", { placeAds, advertisements, role: user.role });
         } else {
-            return res.redirect("/ads/view");
+            return res.redirect("/place/view");
         }
     } catch (error) {
         console.log(error);
-        return res.redirect("/ads/view");
+        return res.redirect("/place/view");
     }
 }
 
-async function editAds(req, res, next) {
+async function editPlace(req, res, next) {
     const idAds = req.query.id;
     const user = req.user;
     const dataUpdate = req.body;
-    const image = req.file;
+    console.log(dataUpdate)
 
     if (!user) {
         return res.redirect("/auth/login");
@@ -71,20 +73,16 @@ async function editAds(req, res, next) {
     dataUpdate.start_date = new Date(dataUpdate.start_date);
     dataUpdate.end_date = new Date(dataUpdate.end_date);
 
-    if (image) dataUpdate.urlImg = image.path;
-    console.log(dataUpdate)
-
     try {
         await adsModel.findByIdAndUpdate(idAds, dataUpdate);
-        // return res.redirect(`/ads/form?id=${idAds}`);
-        return res.redirect("/ads/view")
+        return res.redirect(`/ads/form?id=${idAds}`);
     } catch (error) {
         console.log(error);
         return res.redirect("/ads/view");
     }
 }
 
-async function deleteAds(req, res, next) {
+async function deletePlace(req, res, next) {
     const idAds = req.query.id;
     const user = req.user
 
@@ -101,4 +99,4 @@ async function deleteAds(req, res, next) {
     }
 }
 
-export { viewAds, formAds, editAds, deleteAds }
+export { viewPlace, formPlace, editPlace, deletePlace };

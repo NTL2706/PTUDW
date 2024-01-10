@@ -7,6 +7,9 @@ const configEnv = {
     "SALTROUNDS": process.env.SALTROUNDS,
     "SESSION_SECRET": process.env.SESSION_SECRET,
     "PAGE_SIZE": 4,
+    "CLOUDINARY_NAME": process.env.CLOUDINARY_NAME,
+    "CLOUDINARY_KEY": process.env.CLOUDINARY_KEY,
+    "CLOUDINARY_SECRET": process.env.CLOUDINARY_SECRET,
 }
 
 export default configEnv;
