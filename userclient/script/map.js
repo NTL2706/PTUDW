@@ -63,11 +63,6 @@ var markersData = [
     lat: 10.7847,
     lon: 106.6942,
     type: 0,
-    info: {
-      htqc: "Cổ động chính trị",
-      qc: { kqc: "Trụ,cụm Pano", kt: { dai: "21.5", rong: "3.5" }, sl: "1" },
-      haqc: "https://panoquangcao.net/wp-content/uploads/2020/09/tru-bien-quang-cao-5-768x507.jpg",
-    },
   },
   {
     lat: 10.77036,
@@ -83,13 +78,11 @@ var markersData = [
     lat: 10.77059,
     lon: 106.66949,
     type: 1,
-    info: {
-      htqc: "Xã hội hoá",
-      qc: { kqc: "Trụ, cụm Pano", kt: { dai: "23.5", rong: "33.5" }, sl: "1" },
-      haqc: "https://panoquangcao.net/wp-content/uploads/2020/09/tru-bien-quang-cao-5-768x507.jpg",
-    },
   },
 ];
+
+var map = null;
+var clickMarkerLayer = null;
 
 const checkPlace = (place) => {
   switch (place.type) {
@@ -114,7 +107,7 @@ const checkPlace = (place) => {
 };
 
 $(document).ready(function () {
-  var map = L.map("map").setView([10.7769, 106.7009], 13);
+  map = L.map("map").setView([10.7769, 106.7009], 13);
 
   L.tileLayer(
     "https://{s}.tile.thunderforest.com/atlas/{z}/{x}/{y}.png?apikey=a1cb0032c1264a8d9a88251c4866a2c3",
@@ -125,7 +118,7 @@ $(document).ready(function () {
   ).addTo(map);
 
   var markers = L.markerClusterGroup();
-  var clickMarkerLayer = L.layerGroup().addTo(map);
+  clickMarkerLayer = L.layerGroup().addTo(map);
 
   const markersDataWithFetchStatus = markersData.map((marker) => ({
     ...marker,
@@ -136,7 +129,7 @@ $(document).ready(function () {
     const newMarker = L.marker([marker.lat, marker.lon], {
       icon: L.divIcon({
         className: "custom-div-icon",
-        html: `<iconify-icon icon="material-symbols:personal-places-rounded" style="color: ${marker.type ? "#2065D1" : "#5119B7"
+        html: `<iconify-icon icon=${marker.info ? "material-symbols:personal-places-rounded" : "fluent:real-estate-20-filled"} style="color: ${marker.type ? "#2065D1" : "#5119B7"
           };" width="40" height="40"></iconify-icon>`,
         iconSize: [40, 40],
         iconAnchor: [15, 40],
@@ -182,12 +175,12 @@ $(document).ready(function () {
   async function handleMarkerClick(newMarker, marker) {
 
     fetchData(marker).then(() => {
-      const thongtinAd = `<div class="informflex">
+      const thongtinAd = marker.info ? `<div class="informflex">
       <div class="flex">
-          <iconify-icon icon="carbon:information" style="color: "#2065D1" width="30" height="30"></iconify-icon>
-          <h1 style="color: '#2065D1'">Thông tin địa điểm quảng cáo</h1>
+          <iconify-icon icon="carbon:information" style="color: "#2065D1" width="25" height="25"></iconify-icon>
+          <h2 style="color: '#2065D1'">Thông tin địa điểm quảng cáo</h2>
       </div>
-      <h2 style="margin-top: 24px">${marker.info.qc.kqc}</h2>
+      <h2 style="margin-top: 12px">${marker.info.qc.kqc}</h2>
       <div style="opacity: 0.8">${marker.response.display_name
         }</div>
       <div>Kích thước: <strong>${marker.info.qc.kt.dai
@@ -200,13 +193,25 @@ $(document).ready(function () {
       <div class="imagediv">Hình ảnh: <img src=${marker.info.haqc
         }></div>
       <button id="reportViolationBtn">  <iconify-icon icon="ri:alert-fill" style="color: "#D0342C" width="20" height="20"></iconify-icon>Báo cáo vi phạm</button>
-  </div>`;
+  </div>` :
+        `<div class="informflex">
+            <div class="flex">
+              <iconify-icon icon="carbon:information" style="color: "#2065D1" width="25" height="25"></iconify-icon>
+              <h2 style="color: '#2065D1'">Thông tin địa điểm quảng cáo</h2>
+            </div>
+            <h4 style="margin-top: 12px">Chưa có biển quảng cáo</h4>
+        </div>`;
 
 
 
 
       function isEqual(obj1, obj2) {
         return JSON.stringify(obj1) === JSON.stringify(obj2);
+      }
+
+      if ($("#form_container") && $("#form_container").hasClass("active")) {
+        $("#form_container").removeClass("active");
+        $("#info_container").addClass("active");
       }
 
 
@@ -219,7 +224,7 @@ $(document).ready(function () {
 
 
       $("#reportViolationBtn").click(function () {
-        createReportForm();
+        createReportForm(marker.response.display_name);
       });
 
       newMarker
@@ -247,7 +252,8 @@ $(document).ready(function () {
       }),
     });
 
-    clickMarkerLayer.clearLayers().addLayer(clickMarker);
+    clickMarkerLayer.clearLayers()
+    clickMarkerLayer.addLayer(clickMarker);
 
     $("#map_info").html("Đang tải...").show();
 
@@ -266,18 +272,25 @@ $(document).ready(function () {
                         <iconify-icon icon="carbon:information" style="color: "#2065D1" width="20" height="20"></iconify-icon>
                         <h2> Thông tin địa điểm</h2>
                     </div >
-                    <div style="margin-top: 24px"><strong>${address}</strong></div>
+                    <div style="margin-top: 12px"><strong>${address}</strong></div>
                     <button id="reportViolationBtn">  <iconify-icon icon="ri:alert-fill" style="color: "#D0342C" width="20" height="20"></iconify-icon>Báo cáo vi phạm</button>
                 </div>
             `;
 
 
       $("#ad_info").html("Chọn 1 điểm quảng cáo trên bản đồ").show();
+      if ($("#form_container") && $("#form_container").hasClass("active")) {
+        $("#form_container").removeClass("active");
+        $("#info_container").addClass("active");
+      }
+
       $("#ad_info").removeClass("active");
       $("#map_info").html(thongtinMap).show();
 
+
       $("#reportViolationBtn").click(function () {
-        createReportForm();
+        console.log(address);
+        createReportForm(address);
       });
 
       clickMarker
@@ -293,24 +306,119 @@ $(document).ready(function () {
 });
 
 
-function createReportForm() {
+async function createReportForm(address) {
   const formHTML = `
-    <form id="reportForm">
-      <!-- Your form fields go here -->
-      <label for="reason">Lý do báo cáo:</label>
-      <textarea id="reason" name="reason" rows="4" cols="50"></textarea>
-      <br>
-      <input type="submit" class="submit" value="Gửi báo cáo">
-    </form>
+  <form>
+    <div class='form-control'>
+      <label for="display_name">Tên</label>
+      <input class="form-input" name="display_name" type="text">
+    </div>
+
+    <div class='form-control'> 
+      <label for="phone_number">Số điện thoại</label>
+      <input class="form-input" name="phone_number" type="text">
+    </div>
+
+    <div class='form-control'> 
+      <label for="location">Địa chỉ</label>
+      <input class="form-input"  name="location" type="text" value="${address}">
+    </div>
+
+    <div class='form-control'>
+      <label for="about">Lí do báo cáo</label>
+      <input name="about" type="hidden">
+      <div class="editor"></div>
+    </div>
+
+    <button class="btn btn-primary" type="submit">Gửi Báo Cáo</button>
+  </form>
   `;
 
   $("#info_container").removeClass("active");
   $("#form_container").addClass("active");
   $("#form_container").html(formHTML);
 
-  // Attach submit event for the report form
-  $("#reportForm").submit(function (event) {
-    event.preventDefault();
-    alert("Báo cáo đã được gửi đi!");
+
+  var quill = new Quill('.editor', {
+    modules: {
+      toolbar: [
+        ['bold', 'italic'],
+        ['image'],
+        [{ list: 'ordered' }, { list: 'bullet' }]
+      ]
+    },
+    placeholder: 'Có thể tải lên tối đa 2 hình ảnh',
+    theme: 'snow'
   });
+
+  var form = document.querySelector('form');
+
+  form.onsubmit = function () {
+    var about = document.querySelector('input[name=about]');
+    about.value = JSON.stringify(quill.getContents());
+
+    console.log("Submitted", $(form).serialize(), $(form).serializeArray());
+
+    alert('Open the console to see the submit data!')
+    return false;
+  };
+
+}
+
+window.handleMouseEnter = function () {
+  var searchDiv = document.querySelector('.search');
+  searchDiv.classList.add('active');
+}
+
+window.handleEnter = function (event) {
+  if (event.key === 'Enter') {
+    handleClick();
+  }
+}
+
+window.handleMouseLeave = function () {
+  var searchDiv = document.querySelector('.search');
+  var inputValue = searchDiv.querySelector('input').value;
+  if (inputValue === '') {
+    clickMarkerLayer.clearLayers();
+    searchDiv.classList.remove('active');
+  } else {
+    searchDiv.classList.add('active');
+  }
+}
+
+window.handleClick = async function () {
+  var searchDiv = document.querySelector('.search');
+  var inputField = searchDiv.querySelector('input');
+  const address = inputField.value;
+
+  if (inputField.value === '') {
+    inputField.focus();
+  } else {
+    try {
+      const response = await fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + address);
+      const data = await response.json();
+
+      if (data.length > 0) {
+        var result = data[0];
+        var lat = result.lat;
+        var lon = result.lon;
+
+        var marker = L.marker([lat, lon]).addTo(map);
+
+        // Xóa các Marker cũ nếu có
+        clickMarkerLayer.clearLayers();
+
+        // Thêm Marker mới
+        clickMarkerLayer.addLayer(marker);
+
+        // Đưa bản đồ về giữa Marker mới
+        map.panTo([lat, lon]);
+      } else {
+        alert('Không tìm thấy địa chỉ');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
 }
