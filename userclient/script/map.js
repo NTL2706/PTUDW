@@ -1,88 +1,6 @@
-var markersData = [
-  {
-    lat: 10.7805,
-    lon: 106.6991,
-    type: 0,
-    info: {
-      htqc: "Cổ động chính trị",
-      qc: { kqc: "Trụ, cụm Pano", kt: { dai: "2.5", rong: "34.5" }, sl: "1" },
-      haqc: "https://panoquangcao.net/wp-content/uploads/2020/09/tru-bien-quang-cao-5-768x507.jpg",
-    },
-  },
-  {
-    lat: 10.7761,
-    lon: 106.7024,
-    type: 1,
-    info: {
-      htqc: "Quảng cáo thương mại",
-      qc: { kqc: "Trụ, cụm Pano", kt: { dai: "2.5", rong: "31.5" }, sl: "1" },
-      haqc: "https://panoquangcao.net/wp-content/uploads/2020/09/tru-bien-quang-cao-5-768x507.jpg",
-    },
-  },
-  {
-    lat: 10.7823,
-    lon: 106.6952,
-    type: 1,
-    info: {
-      htqc: "Xã hội hoá",
-      qc: { kqc: "Trụ, cụm Pano", kt: { dai: "2.5", rong: "3.5" }, sl: "1" },
-      haqc: "https://panoquangcao.net/wp-content/uploads/2020/09/tru-bien-quang-cao-5-768x507.jpg",
-    },
-  },
-  {
-    lat: 10.54347,
-    lon: 106.39759,
-    type: 0,
-    info: {
-      htqc: "Quảng cáo thương mại",
-      qc: { kqc: "Trụ, cụm Pano", kt: { dai: "2.5", rong: "3.5" }, sl: "1" },
-      haqc: "https://panoquangcao.net/wp-content/uploads/2020/09/tru-bien-quang-cao-5-768x507.jpg",
-    },
-  },
-  {
-    lat: 10.7679,
-    lon: 106.6933,
-    type: 1,
-    info: {
-      htqc: "Cổ động chính trị",
-      qc: { kqc: "Trụ, cụm Pano", kt: { dai: "23.5", rong: "3.25" }, sl: "1" },
-      haqc: "https://panoquangcao.net/wp-content/uploads/2020/09/tru-bien-quang-cao-5-768x507.jpg",
-    },
-  },
-  {
-    lat: 10.77225,
-    lon: 106.66505,
-    type: 0,
-    info: {
-      htqc: "Cổ động chính trị",
-      qc: { kqc: "Trụ, cụm Pano", kt: { dai: "24.5", rong: "3.5" }, sl: "1" },
-      haqc: "https://panoquangcao.net/wp-content/uploads/2020/09/tru-bien-quang-cao-5-768x507.jpg",
-    },
-  },
-  {
-    lat: 10.7847,
-    lon: 106.6942,
-    type: 0,
-  },
-  {
-    lat: 10.77036,
-    lon: 106.67228,
-    type: 1,
-    info: {
-      htqc: "Xã hội hoá",
-      qc: { kqc: "Trụ, cụm Pano", kt: { dai: "5.5", rong: "3.5" }, sl: "1" },
-      haqc: "https://panoquangcao.net/wp-content/uploads/2020/09/tru-bien-quang-cao-5-768x507.jpg",
-    },
-  },
-  {
-    lat: 10.77059,
-    lon: 106.66949,
-    type: 1,
-  },
-];
-
 var map = null;
 var clickMarkerLayer = null;
+var details = []
 
 const checkPlace = (place) => {
   switch (place.type) {
@@ -106,7 +24,19 @@ const checkPlace = (place) => {
   }
 };
 
-$(document).ready(function () {
+$(document).ready(async function () {
+
+  async function fetchData() {
+    try {
+      const response = await fetch('https://server-ptudw.onrender.com/api/placeAds?fbclid=IwAR3fRxRkrq-S7z1miVQKr41r3t-uuHHu30I5oPVozm8mN2V_PkieJMC4vE8');
+      const data = await response.json();
+      return data.data;
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      throw error;
+    }
+  }
+
   map = L.map("map").setView([10.7769, 106.7009], 13);
 
   L.tileLayer(
@@ -117,135 +47,108 @@ $(document).ready(function () {
     }
   ).addTo(map);
 
-  var markers = L.markerClusterGroup();
+  const markers = L.markerClusterGroup({
+    autoClose: false, // Set autoClose to false
+  });
+
   clickMarkerLayer = L.layerGroup().addTo(map);
 
-  const markersDataWithFetchStatus = markersData.map((marker) => ({
-    ...marker,
-    isDataFetched: false,
-  }));
+  const markersData = await fetchData();
 
-  for (const marker of markersDataWithFetchStatus) {
-    const newMarker = L.marker([marker.lat, marker.lon], {
+  for (const marker of markersData) {
+    const newMarker = L.marker([marker.lat, marker.long], {
       icon: L.divIcon({
         className: "custom-div-icon",
-        html: `<iconify-icon icon=${marker.info ? "material-symbols:personal-places-rounded" : "fluent:real-estate-20-filled"} style="color: ${marker.type ? "#2065D1" : "#5119B7"
+        html: `<iconify-icon icon=${!marker.info ? "material-symbols:personal-places-rounded" : "fluent:real-estate-20-filled"} style="color: ${marker.is_deleted ? "#2065D1" : "#5119B7"
           };" width="40" height="40"></iconify-icon>`,
         iconSize: [40, 40],
         iconAnchor: [15, 40],
         popupAnchor: [0, -40],
       }),
     });
+
     markers.addLayer(newMarker);
+    newMarker
+      .bindPopup(
+        `<strong>${marker.type}</strong><br><br>${marker.address
+        }<br><br><strong>${marker.is_deleted ? "ĐÃ QUY HOẠCH" : "CHƯA QUY HOẠCH"
+        }</strong>`
+      )
 
-    newMarker.on("click", function () {
-      handleMarkerClick(newMarker, marker);
+    newMarker.on("click", async function () {
+      handleMarkerClick(newMarker, marker,);
     });
-  }
-
-
-  async function fetchData(marker) {
-
-    try {
-      if (!marker.isDataFetched) {
-        $("#ad_info").html("Đang tải...").show();
-        const res = await $.ajax({
-          url: `https://nominatim.openstreetmap.org/reverse`,
-          data: {
-            format: "json",
-            lat: marker.lat,
-            lon: marker.lon,
-            "accept-language": "vi",
-          },
-          method: "GET",
-          dataType: "json",
-          timeout: 10000,
-        });
-
-        marker.response = res;
-        marker.isDataFetched = true;
-      }
-    } catch (error) {
-      console.error("Error fetching address:", error);
-    }
   }
 
   var previousMarkerState = null
 
-  async function handleMarkerClick(newMarker, marker) {
+  function handleMarkerClick(newMarker, marker) {
+    const thongtinAd = `
+  <div class="informflex">
+    <div class="flex">
+      <iconify-icon icon="carbon:information" style="color: #2065D1" width="25" height="25"></iconify-icon>
+      <h2 style="color: #2065D1">Thông tin địa điểm quảng cáo</h2>
+    </div>
+    ${marker.ads.length ? marker.ads.map((ad, index) => adInfo(ad, marker.address, index)).join("") :
+        `<h4>Chưa có biển quảng cáo</h4>`
+      }
+  </div>
+`;
 
-    fetchData(marker).then(() => {
-      const thongtinAd = marker.info ? `<div class="informflex">
-      <div class="flex">
-          <iconify-icon icon="carbon:information" style="color: "#2065D1" width="25" height="25"></iconify-icon>
-          <h2 style="color: '#2065D1'">Thông tin địa điểm quảng cáo</h2>
-      </div>
-      <h2 style="margin-top: 12px">${marker.info.qc.kqc}</h2>
-      <div style="opacity: 0.8">${marker.response.display_name
+    function adInfo(ad, address, index) {
+      return `
+      <div class='ad_item ad_item_${index}'>
+      <h2>${ad.ad.type}</h2>
+      <div style="opacity: 0.8">${address
         }</div>
-      <div>Kích thước: <strong>${marker.info.qc.kt.dai
-        }m x ${marker.info.qc.kt.rong}m </strong></div>
-      <div>Số lượng: <strong>${marker.info.qc.sl
+      <div style="opacity: 0.8">${ad.ad.content
+        }</div>
+      <div>Kích thước: <strong>${ad.ad.height
+        }m x ${ad.ad.width}m </strong></div>
+      <div>Số lượng: <strong>${ad.quantity
         } trụ/bảng</strong></div>
-      <div >Phân loại: <strong>${checkPlace(
-          marker.response
-        )} trụ/bảng</strong></div>
-      <div class="imagediv">Hình ảnh: <img src=${marker.info.haqc
+      <div >Phân loại: <strong>${marker.type
+        }</strong></div>
+      <div class="imagediv" >Hình ảnh: <img src=${ad.ad.urlImg
         }></div>
-      <button id="reportViolationBtn">  <iconify-icon icon="ri:alert-fill" style="color: "#D0342C" width="20" height="20"></iconify-icon>Báo cáo vi phạm</button>
-  </div>` :
-        `<div class="informflex">
-            <div class="flex">
-              <iconify-icon icon="carbon:information" style="color: "#2065D1" width="25" height="25"></iconify-icon>
-              <h2 style="color: '#2065D1'">Thông tin địa điểm quảng cáo</h2>
-            </div>
-            <h4 style="margin-top: 12px">Chưa có biển quảng cáo</h4>
-        </div>`;
+        <div class="flex">
+          <button onclick="handleDetail(index=${index})">  <iconify-icon icon="ph:info-bold"  width="20" height="20"></iconify-icon>Chi tiết</button>
+          <button onclick="handleReport(address='${address}')">  <iconify-icon icon="ri:alert-fill"  width="20" height="20"></iconify-icon>Báo cáo vi phạm</button>
+        </div>
+        </div>
+       `;
+
+    }
+
+    function isEqual(obj1, obj2) {
+      return JSON.stringify(obj1) === JSON.stringify(obj2);
+    }
+
+    if ($("#form_container") && $("#form_container").hasClass("active")) {
+      $("#form_container").removeClass("active");
+      $("#info_container").addClass("active");
+    }
 
 
+    if (!$("#ad_info").hasClass("active") || !isEqual(marker, previousMarkerState)) {
+      $("#map_info").html("Chọn 1 điểm bất kỳ trên bản đồ").show();
+      $("#map_info").removeClass("active");
+      $("#ad_info").addClass("active");
+      $("#ad_info").html(thongtinAd).show();
+    }
+
+    newMarker.openPopup();
 
 
-      function isEqual(obj1, obj2) {
-        return JSON.stringify(obj1) === JSON.stringify(obj2);
-      }
-
-      if ($("#form_container") && $("#form_container").hasClass("active")) {
-        $("#form_container").removeClass("active");
-        $("#info_container").addClass("active");
-      }
-
-
-      if (!$("#ad_info").hasClass("active") || !isEqual(marker, previousMarkerState)) {
-        $("#map_info").html("Chọn 1 điểm bất kỳ trên bản đồ").show();
-        $("#map_info").removeClass("active");
-        $("#ad_info").addClass("active");
-        $("#ad_info").html(thongtinAd).show();
-      }
-
-
-      $("#reportViolationBtn").click(function () {
-        createReportForm(marker.response.display_name);
-      });
-
-      newMarker
-        .bindPopup(
-          `<strong>${marker.info.htqc}</strong><br><br>${checkPlace(
-            marker.response
-          )}<br><br>${marker.response.display_name}<br><br><strong>${marker.type ? "ĐÃ QUY HOẠCH" : "CHƯA QUY HOẠCH"
-          }</strong>`
-        )
-        .openPopup();
-
-      previousMarkerState = { ...marker };
-    });
-  }
+    previousMarkerState = marker;
+  };
 
   map.on("click", async function (e) {
     let address = null;
     const clickMarker = L.marker(e.latlng, {
       icon: L.divIcon({
         className: "custom-div-icon",
-        html: `<iconify-icon icon="mdi:map-marker-radius" style="color: #b71d18" width="40" height="40"></iconify-icon>`,
+        html: `<iconify-icon icon = "mdi:map-marker-radius" style = "color: #b71d18" width = "40" height = "40" ></iconify-icon > `,
         iconSize: [40, 40],
         iconAnchor: [15, 40],
         popupAnchor: [0, -40],
@@ -273,7 +176,7 @@ $(document).ready(function () {
                         <h2> Thông tin địa điểm</h2>
                     </div >
                     <div style="margin-top: 12px"><strong>${address}</strong></div>
-                    <button id="reportViolationBtn">  <iconify-icon icon="ri:alert-fill" style="color: "#D0342C" width="20" height="20"></iconify-icon>Báo cáo vi phạm</button>
+                    <button style="margin-top: 12px" id="reportViolationBtn">  <iconify-icon icon="ri:alert-fill" style="color: "#D0342C" width="20" height="20"></iconify-icon>Báo cáo vi phạm</button>
                 </div>
             `;
 
@@ -289,7 +192,6 @@ $(document).ready(function () {
 
 
       $("#reportViolationBtn").click(function () {
-        console.log(address);
         createReportForm(address);
       });
 
@@ -308,6 +210,7 @@ $(document).ready(function () {
 
 async function createReportForm(address) {
   const formHTML = `
+  <iconify-icon onclick="back()" icon="mingcute:back-fill" style="color: black; margin-bottom : 12px" width="20" height="20"></iconify-icon>
   <form>
     <div class='form-control'>
       <label for="display_name">Tên</label>
@@ -365,9 +268,44 @@ async function createReportForm(address) {
 
 }
 
-window.handleMouseEnter = function () {
-  var searchDiv = document.querySelector('.search');
-  searchDiv.classList.add('active');
+window.handleReport = function (address) {
+  createReportForm(address)
+}
+
+window.handleDetail = function (index) {
+  if (!details[index]) {
+    details[index] = { isOpen: true };
+  } else {
+    details[index].isOpen = !details[index].isOpen;
+  }
+
+  const detail = document.body.querySelector(`.ad_item_${index}`)
+
+  if (details[index].isOpen) {
+    detail.querySelector('button').innerHTML = `<iconify-icon icon="ph:info-bold"  width="20" height="20"></iconify-icon> Thu gọn`;
+    detail.classList.add('active')
+  }
+  else {
+    detail.querySelector('button').innerHTML = `<iconify-icon icon="ph:info-bold"  width="20" height="20"></iconify-icon> Chi tiết`;
+    detail.classList.remove('active')
+  }
+};
+
+window.back = function () {
+  $("#info_container").addClass("active");
+  $("#form_container").removeClass("active");
+}
+
+window.handleMouseEnter = function (mode) {
+  if (mode) {
+    var menuDiv = document.querySelector('.menu-form');
+    menuDiv.classList.add('active');
+  }
+  else {
+    var searchDiv = document.querySelector('.search');
+    searchDiv.classList.add('active');
+  }
+
 }
 
 window.handleEnter = function (event) {
@@ -376,14 +314,34 @@ window.handleEnter = function (event) {
   }
 }
 
-window.handleMouseLeave = function () {
+
+window.handleMouseLeave = function (mode) {
+  if (mode) {
+    var menuDiv = document.querySelector('.menu-form');
+    menuDiv.classList.remove('active');
+  }
+  else {
+    var searchDiv = document.querySelector('.search');
+    var inputValue = searchDiv.querySelector('input').value;
+    var isInputFocused = document.activeElement === searchDiv.querySelector('input');
+
+    if (inputValue === '' && !isInputFocused) {
+      searchDiv.classList.remove('active');
+    }
+  }
+}
+
+window.handleFocus = function () {
   var searchDiv = document.querySelector('.search');
-  var inputValue = searchDiv.querySelector('input').value;
-  if (inputValue === '') {
-    clickMarkerLayer.clearLayers();
+  searchDiv.classList.add('active');
+}
+
+window.handleBlur = function () {
+  var searchDiv = document.querySelector('.search');
+  var isInputFocused = document.activeElement === searchDiv.querySelector('input');
+
+  if (!isInputFocused && searchDiv.querySelector('input').value === "") {
     searchDiv.classList.remove('active');
-  } else {
-    searchDiv.classList.add('active');
   }
 }
 
