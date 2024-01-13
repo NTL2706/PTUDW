@@ -643,55 +643,64 @@
                             <div class="col-xl">
                                 <div class="card mb-4">
                                     <div class="card-header d-flex justify-content-between align-items-center">
-                                        <h5 class="mb-0">Form place advertising sign</h5>
-                                        <small class="text-muted float-end">ID:
-                                            {{placeAds._id}}</small>
+                                        <h5 class="mb-0">Create advertising sign</h5>
                                     </div>
                                     <div class="card-body">
-                                        <form method="POST" action="/place/edit?id={{placeAds._id}}">
-                                            <div class="form-floating form-floating-outline mb-4">
-                                                <input type="text" class="form-control" id="basic-default-fullname"
-                                                    value="{{placeAds.type}}" name="type" />
-                                                <label for="basic-default-fullname">Type</label>
-                                            </div>
-                                            <div class="form-floating form-floating-outline mb-4">
-                                                <input type="text" class="form-control" id="basic-default-fullname"
-                                                    value="{{placeAds.address}}" name="address" />
-                                                <label for="basic-default-fullname">Address</label>
-                                            </div>
-                                            <div class="form-floating form-floating-outline mb-4">
-                                                <input type="text" class="form-control" id="basic-default-company"
-                                                    value="{{placeAds.long}}" name="long" />
-                                                <label for="basic-default-company">Long</label>
-                                            </div>
-                                            <div class="form-floating form-floating-outline mb-4">
-                                                <input type="text" class="form-control" id="basic-default-company"
-                                                    value="{{placeAds.lat}}" name="lat" />
-                                                <label for="basic-default-company">Lat</label>
-                                            </div>
+                                        <form method="POST" action="/ads/create" enctype="multipart/form-data">
                                             <div class="form-floating form-floating-outline mb-4">
                                                 <select class="form-select" id="exampleFormControlSelect1"
-                                                    aria-label="Default select example" name="ads">
-                                                    <option value="{{placeAds.ads._id}}" selected>{{placeAds.ads.type}}-
-                                                        id:
-                                                        {{placeAds.ads._id}}
-                                                    </option>
-                                                    {{#each advertisements}}
-                                                        <option value="{{this._id}}">{{this.type}}
-                                                            - id:
-                                                            {{this._id}}
+                                                    aria-label="Default select example" name="type">
+                                                    {{#each typeAds}}
+                                                        <option value="{{this.name}}">
+                                                            {{this.name}}
                                                         </option>
                                                     {{/each}}
                                                 </select>
                                                 <label for="exampleFormControlSelect1">Open this select
-                                                    advertising sign</label>
+                                                    type</label>
                                             </div>
-
-                                            {{#if (eq "admin" role)}}
-                                                <button type="submit" class="btn btn-primary">
-                                                    Edit
-                                                </button>
-                                            {{/if}}
+                                            <div class="form-floating form-floating-outline mb-4">
+                                                <input type="text" class="form-control" id="basic-default-company"
+                                                    value="{{advertisement.height}}" name="height" />
+                                                <label for="basic-default-company">Height</label>
+                                            </div>
+                                            <div class="mb-4">
+                                                <div class="input-group input-group-merge">
+                                                    <div class="form-floating form-floating-outline">
+                                                        <input type="text" id="basic-default-email" class="form-control"
+                                                            value="{{advertisement.width}}" aria-label="john.doe"
+                                                            aria-describedby="basic-default-email2" name="width" />
+                                                        <label for="basic-default-email">Width</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-floating form-floating-outline mb-4">
+                                                <input class="form-control" type="datetime-local"
+                                                    id="html5-datetime-local-input" value="{{advertisement.start_date}}"
+                                                    name="start_date" />
+                                                <label for="html5-datetime-local-input">Start date</label>
+                                            </div>
+                                            <div class="form-floating form-floating-outline mb-4">
+                                                <input class="form-control" type="datetime-local"
+                                                    id="html5-datetime-local-input" value="{{advertisement.end_date}}"
+                                                    name="end_date" />
+                                                <label for="html5-datetime-local-input">End date</label>
+                                            </div>
+                                            <div class="form-floating form-floating-outline mb-4">
+                                                <textarea id="basic-default-message" class="form-control"
+                                                    style="height: 60px"
+                                                    name="content">{{advertisement.content}}</textarea>
+                                                <label for="basic-default-message">Content</label>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="formFile" class="form-label">Default file
+                                                    input example</label>
+                                                <input class="form-control" type="file" id="formFile" name="image"
+                                                    multiple />
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">
+                                                Create
+                                            </button>
                                         </form>
                                     </div>
                                 </div>
