@@ -643,55 +643,39 @@
                             <div class="col-xl">
                                 <div class="card mb-4">
                                     <div class="card-header d-flex justify-content-between align-items-center">
-                                        <h5 class="mb-0">Form place advertising sign</h5>
-                                        <small class="text-muted float-end">ID:
-                                            {{placeAds._id}}</small>
+                                        <h5 class="mb-0">Form create account district</h5>
                                     </div>
                                     <div class="card-body">
-                                        <form method="POST" action="/place/edit?id={{placeAds._id}}">
+                                        <form method="POST" action="/auth/create-account">
                                             <div class="form-floating form-floating-outline mb-4">
-                                                <input type="text" class="form-control" id="basic-default-fullname"
-                                                    value="{{placeAds.type}}" name="type" />
-                                                <label for="basic-default-fullname">Type</label>
+                                                <input type="email" class="form-control" id="basic-default-fullname"
+                                                    placeholder="admin@gmail.com" name="email" />
+                                                <label for="basic-default-fullname">Email</label>
                                             </div>
                                             <div class="form-floating form-floating-outline mb-4">
                                                 <input type="text" class="form-control" id="basic-default-fullname"
-                                                    value="{{placeAds.address}}" name="address" />
-                                                <label for="basic-default-fullname">Address</label>
+                                                    placeholder="admin" name="name" />
+                                                <label for="basic-default-fullname">Name</label>
                                             </div>
                                             <div class="form-floating form-floating-outline mb-4">
-                                                <input type="text" class="form-control" id="basic-default-company"
-                                                    value="{{placeAds.long}}" name="long" />
-                                                <label for="basic-default-company">Long</label>
-                                            </div>
-                                            <div class="form-floating form-floating-outline mb-4">
-                                                <input type="text" class="form-control" id="basic-default-company"
-                                                    value="{{placeAds.lat}}" name="lat" />
-                                                <label for="basic-default-company">Lat</label>
+                                                <input type="password" class="form-control" id="basic-default-company"
+                                                    placeholder="*********" name="password" />
+                                                <label for="basic-default-company">Password</label>
                                             </div>
                                             <div class="form-floating form-floating-outline mb-4">
                                                 <select class="form-select" id="exampleFormControlSelect1"
-                                                    aria-label="Default select example" name="ads">
-                                                    <option value="{{placeAds.ads._id}}" selected>{{placeAds.ads.type}}-
-                                                        id:
-                                                        {{placeAds.ads._id}}
-                                                    </option>
-                                                    {{#each advertisements}}
-                                                        <option value="{{this._id}}">{{this.type}}
-                                                            - id:
-                                                            {{this._id}}
-                                                        </option>
+                                                    aria-label="Default select example" name="option">
+                                                    {{#each district}}
+                                                        <option value="{{this._id}}">{{this.name}}</option>
                                                     {{/each}}
                                                 </select>
                                                 <label for="exampleFormControlSelect1">Open this select
-                                                    advertising sign</label>
+                                                    district</label>
                                             </div>
-
-                                            {{#if (eq "admin" role)}}
-                                                <button type="submit" class="btn btn-primary">
-                                                    Edit
-                                                </button>
-                                            {{/if}}
+                                            <input type="text" style="display: none;" name="role" value="district">
+                                            <button type="submit" class="btn btn-primary">
+                                                Create
+                                            </button>
                                         </form>
                                     </div>
                                 </div>

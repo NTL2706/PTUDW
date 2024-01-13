@@ -26,3 +26,38 @@ export async function register(req, res) {
     })
 }
 
+export async function createAccount(req, res) {
+    const { name, email, password, role, option } = req.body;
+
+    const salt = bcrypt.genSaltSync(Number(dotConfig.SALTROUNDS));
+    const hash = bcrypt.hashSync(password, salt);
+
+    console.log(req.body.option)
+    console.log(req.body.email)
+    console.log(req.body.role)
+
+    try {
+        const user = new userModel({
+            name: name,
+            email: email,
+            password: hash,
+            role: role,
+            option: {
+                district: role === "district" ? option : null,
+                ward: role === "ward" ? option : null
+            }
+        })
+
+        await user.save();
+
+        return res.redirect("/");
+    } catch (error) {
+        return res.status(400).json({
+            err: error.message
+        })
+    }
+    return res.status(200).json({
+        message: "register success"
+    })
+}
+

@@ -72,7 +72,6 @@ async function editAds(req, res, next) {
     dataUpdate.end_date = new Date(dataUpdate.end_date);
 
     if (image) dataUpdate.urlImg = image.path;
-    console.log(dataUpdate)
 
     try {
         await adsModel.findByIdAndUpdate(idAds, dataUpdate);
@@ -101,4 +100,34 @@ async function deleteAds(req, res, next) {
     }
 }
 
-export { viewAds, formAds, editAds, deleteAds }
+async function createAds(req, res, next) {
+    // if (!req.user || req.user.role !== "admin") {
+    //     return res.redirect("/auth/login");
+    // }
+
+    let data = req.body;
+    const img = req.file;
+
+    const dataInsert = {
+        type: data.type,
+        height: data.height,
+        width: data.width,
+        content: data.content,
+        urlImg: img.path,
+        start_date: new Date(data.start_date),
+        end_date: new Date(data.end_date),
+        company: "Company B",
+    }
+
+    console.log(dataInsert)
+
+    try {
+        await adsModel.insertMany(dataInsert);
+        return res.redirect("/ads/view");
+    } catch (error) {
+        console.log(error);
+        return res.redirect("/ads/view");
+    }
+}
+
+export { viewAds, formAds, editAds, deleteAds, createAds }
