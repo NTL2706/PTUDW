@@ -1,11 +1,11 @@
-import dotConfig from "./config/configEnv.js";
+import dotConfig from "./configs/configEnv.js";
 import express from "express";
 import app_route from "./routers/index.js"
 import passport from "passport";
-import initializePassport from "./config/passportConfig.js"
+import initializePassport from "./configs/passportConfig.js"
 import session from "express-session";
 import handlebars from "express-handlebars"
-import "./config/connectDb.js";
+import "./configs/connectDb.js";
 import { fileURLToPath } from 'url';
 import path from "path";
 
@@ -17,6 +17,11 @@ const app = express();
 app.set("view engine", "hbs");
 app.engine("hbs", handlebars.engine({
     extname: ".hbs",
+    helpers: {
+        eq: (val1, val2) => {
+            return val1 === val2;
+        }
+    }
 }))
 app.set("views", path.join(__dirname, "views"))
 
@@ -29,6 +34,7 @@ app.use(session({
     saveUninitialized: false,
     resave: false
 }))
+app.use(express.static(path.join(__dirname, "public")));
 
 app.use(passport.initialize());
 app.use(passport.session());
