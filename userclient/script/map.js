@@ -57,7 +57,7 @@ $(document).ready(async function () {
   const markersData = await fetchData();
 
   for (const marker of markersData) {
-    const newMarker = L.marker([marker.lat, marker.long], {
+    const newMarker = L.marker([marker.lat, marker.lon], {
       icon: L.divIcon({
         className: "custom-div-icon",
         html: `<iconify-icon icon=${!marker.info ? "material-symbols:personal-places-rounded" : "fluent:real-estate-20-filled"} style="color: ${marker.is_deleted ? "#2065D1" : "#5119B7"
@@ -226,12 +226,14 @@ async function createReportForm(address) {
   <form>
     <div class='form-control'>
       <label for="display_name">Tên</label>
-      <input class="form-input" name="display_name" type="text">
+      <span class="label display_name">Độ dài tên vượt quá qui định</span>
+      <input class="form-input" name="display_name" type="text" placeholder="Nhập tên không quá 50 kí tự" oninput="handleChangeInput(this)">
     </div>
 
     <div class='form-control'> 
       <label for="phone_number">Số điện thoại</label>
-      <input class="form-input" name="phone_number" type="text">
+      <span class="label phone_number">Vui lòng nhập đúng số điện thoại</span>
+      <input class="form-input" name="phone_number" type="text" placeholder="Nhập SĐT" oninput="handleChangeInput(this)">
     </div>
 
     <div class='form-control'> 
@@ -245,7 +247,21 @@ async function createReportForm(address) {
       <div class="editor"></div>
     </div>
 
-    <button class="btn btn-primary" type="submit">Gửi Báo Cáo</button>
+    <div class="capcha flex center">
+    <div class="checkbox-wrapper-44">
+    <label class="toggleButton">
+    <input type="checkbox" value="false" onclick="changeValueAndDisable(this)">
+      <div>
+        <svg viewBox="0 0 44 44">
+          <path d="M14,24 L21,31 L39.7428882,11.5937758 C35.2809627,6.53125861 30.0333333,4 24,4 C12.95,4 4,12.95 4,24 C4,35.05 12.95,44 24,44 C35.05,44 44,35.05 44,24 C44,19.3 42.5809627,15.1645919 39.7428882,11.5937758" transform="translate(-2.000000, -2.000000)"></path>
+          </svg>
+          </div>
+        </label>
+      </div>
+      <div>Tôi không phải là Robot</div>
+    </div>
+
+    <button class="btn btn-primary submit-form" disabled type="submit">Gửi Báo Cáo</button>
   </form>
   `;
 
@@ -266,6 +282,32 @@ async function createReportForm(address) {
     theme: 'snow'
   });
 
+  //quill 
+
+  var maxImageCount = 2;
+
+  // Bắt sự kiện editor-change để theo dõi thay đổi nội dung
+  quill.on('editor-change', function (eventName, delta, oldDelta, source) {
+    if (source === 'user') { // Đảm bảo chỉ xử lý sự kiện do người dùng gây ra
+      var imageCount = countImages();
+      if (imageCount >= maxImageCount) {
+        quill.undo();
+        alert('Số lượng ảnh tối đa đã đạt được');
+      }
+    }
+  });
+
+  function countImages() {
+    var delta = quill.getContents();
+    var imageCount = 0;
+    delta.ops.forEach(function (op) {
+      if (op.insert && op.insert.image) {
+        imageCount++;
+      }
+    });
+    return imageCount;
+  }
+
   var form = document.querySelector('form');
 
   async function getMaxFormId() {
@@ -285,7 +327,8 @@ async function createReportForm(address) {
     const formId = await getMaxFormId()
     var about = document.querySelector('input[name=about]');
     about.value = JSON.stringify(quill.getContents());
-    localStorage.setItem(formId, JSON.stringify($(form).serializeArray()));
+    console.log(quill.getContents())
+    // localStorage.setItem(formId, JSON.stringify($(form).serializeArray()));
     back()
   };
 
@@ -403,3 +446,29 @@ window.handleClick = async function () {
     }
   }
 }
+
+window.changeValueAndDisable = function (checkbox) {
+  if (checkbox.checked) {
+    checkbox.value = 'true';
+    checkbox.disabled = true;
+    document.querySelector('.submit-form').disabled = false;
+  }
+}
+
+window.handleChangeInput = function (input) {
+  if (input.name === 'display_name') {
+    if (input.value.length > 50) {
+      document.querySelector('.label.display_name').classList.add('active');
+    } else {
+      document.querySelector('.label.display_name').classList.remove('active');
+    }
+  } else if (input.name === 'phone_number') {
+    if (!input.value.match(/^[0-9]+$/) || input.value.length < 10 || input.value.length > 11) {
+      document.querySelector('.label.phone_number').classList.add('active');
+    } else {
+      document.querySelector('.label.phone_number').classList.remove('active');
+    }
+  }
+}
+
+
