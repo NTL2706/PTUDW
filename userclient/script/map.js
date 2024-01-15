@@ -32,6 +32,7 @@ $(document).ready(async function () {
       const data = await response.json();
       return data.data;
     } catch (error) {
+      l
       console.error('Error fetching data:', error);
       throw error;
     }
@@ -129,6 +130,10 @@ $(document).ready(async function () {
       $("#info_container").addClass("active");
     }
 
+    newMarker.on("popupclose", function () {
+      $("#ad_info").html("Chọn 1 điểm bất kỳ trên bản đồ").show();
+      $("#ad_info").removeClass("active");
+    });
 
     if (!$("#ad_info").hasClass("active") || !isEqual(marker, previousMarkerState)) {
       $("#map_info").html("Chọn 1 điểm bất kỳ trên bản đồ").show();
@@ -158,7 +163,7 @@ $(document).ready(async function () {
     clickMarkerLayer.clearLayers()
     clickMarkerLayer.addLayer(clickMarker);
 
-    $("#map_info").html("Đang tải...").show();
+    $("#map_info").html('Đang tải... <iconify-icon icon="eos-icons:bubble-loading" width="20" height="20"></iconify-icon>').show();
 
     try {
       const response = await $.ajax({
@@ -202,7 +207,14 @@ $(document).ready(async function () {
     } catch (error) {
       $("#map_info").html("<strong>Lỗi khi tải địa chỉ</strong>").show();
     }
+
+    clickMarker.on("popupclose", function () {
+      $("#map_info").html("Chọn 1 điểm bất kỳ trên bản đồ").show();
+      $("#ad_info").removeClass("active");
+      clickMarkerLayer.clearLayers()
+    });
   });
+
 
   map.addLayer(markers);
 });
@@ -256,14 +268,25 @@ async function createReportForm(address) {
 
   var form = document.querySelector('form');
 
-  form.onsubmit = function () {
+  async function getMaxFormId() {
+    var allKeys = Object.keys(localStorage);
+    var formIds = allKeys
+      .filter(key => key.startsWith('form'))
+      .map(key => parseInt(key.substring(4)))
+      .filter(id => !isNaN(id));
+
+    var maxId = formIds.reduce((max, id) => id > max ? id : max, 0);
+    return 'form' + (maxId + 1);
+  }
+
+
+  form.onsubmit = async function (event) {
+    event.preventDefault();
+    const formId = await getMaxFormId()
     var about = document.querySelector('input[name=about]');
     about.value = JSON.stringify(quill.getContents());
-
-    console.log("Submitted", $(form).serialize(), $(form).serializeArray());
-
-    alert('Open the console to see the submit data!')
-    return false;
+    localStorage.setItem(formId, JSON.stringify($(form).serializeArray()));
+    back()
   };
 
 }

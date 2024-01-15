@@ -12,6 +12,10 @@ h4 {
   font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
 
+button {
+  cursor: pointer;
+}
+
 
 .container {
   width: calc(100% - 24px);
@@ -177,6 +181,7 @@ button[type="submit"] {
   color: black;
 }
 
+
 .ql-editor {
   min-height: 100px;
 }
@@ -292,7 +297,7 @@ iconify-icon {
   width: calc(100% -24px) ;
   color: white;
   margin-top: 12px;
-  background-color: #2065d1;
+  background-color: #4d7fd0;
   border-radius: 10px;
   padding: 12px;
   transition: 0.3s ease;
@@ -326,7 +331,7 @@ iconify-icon {
   gap: 6px;
 }
 
-.ad_item button {
+:where(.ad_item , .informflex) button {
   width: 100%;
   padding: 6px;
   font-size: 16px;
@@ -349,11 +354,11 @@ iconify-icon {
 }
 
 .ad_item button:first-child {
-  color: white;
-  background-color: cadetblue;
-  border-color: cadetblue;
+  color: black;
+  background-color: rgb(66, 220, 202);
+  border-color: rgb(66, 220, 202);
 }
 
 .ad_item button:first-child:hover {
-  background-color: rgba(95, 158, 160, 0.492);
+  background-color: rgb(66, 220, 202 , 0.47);
 }
