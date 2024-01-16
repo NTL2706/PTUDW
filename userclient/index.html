@@ -70,24 +70,32 @@
       </div>
 
       <div id="form_container">
+      </div>
+
+      <div id="report_container">
 
       </div>
 
+
       <div class="search-container flex">
-        <div onmouseenter="handleMouseEnter()" onmouseleave="handleMouseLeave()" onclick="handleClick()"
-          onkeydown="handleEnter(event)" class="search">
-          <iconify-icon icon="iconamoon:search-bold" style="color: black" width="20" height="20"></iconify-icon>
+        <div onmouseenter="handleMouseEnter()" onmouseleave="handleMouseLeave()" onkeydown="handleEnter(event)"
+          class="search">
+          <iconify-icon icon="iconamoon:search-bold" style="color: black" width="20" height="20"
+            onclick="handleClick()"></iconify-icon>
           <input onfocus="handleFocus()" onblur="handleBlur()" type="text" placeholder="Tìm kiếm" />
           <div class="loading">
             <iconify-icon icon="eos-icons:bubble-loading" width="20" height="20"></iconify-icon>
           </div>
         </div>
-        <div class="menu-form" onmouseenter="handleMouseEnter('menu')" onmouseleave="handleMouseLeave('menu')">
+        <div class="menu-form" onmouseenter="handleMouseEnter('menu')" onmouseleave="handleMouseLeave('menu')"
+          onclick="handleClickReport()">
           <iconify-icon icon="tdesign:menu" style="color: black" width="20" height="20">
           </iconify-icon>
           <button>Xem Báo Cáo đã gửi</button>
         </div>
       </div>
+
+
     </div>
   </div>
 </body>

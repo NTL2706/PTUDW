@@ -38,7 +38,13 @@ $(document).ready(async function () {
     }
   }
 
-  map = L.map("map").setView([10.7769, 106.7009], 13);
+  map = L.map("map")
+
+  navigator.geolocation.getCurrentPosition(function (position) {
+    var lat = position.coords.latitude;
+    var lon = position.coords.longitude;
+    map.setView([lat, lon], 13);
+  });
 
   L.tileLayer(
     "https://{s}.tile.thunderforest.com/atlas/{z}/{x}/{y}.png?apikey=a1cb0032c1264a8d9a88251c4866a2c3",
@@ -57,6 +63,7 @@ $(document).ready(async function () {
   const markersData = await fetchData();
 
   for (const marker of markersData) {
+    console.log(marker)
     const newMarker = L.marker([marker.lat, marker.lon], {
       icon: L.divIcon({
         className: "custom-div-icon",
@@ -84,19 +91,20 @@ $(document).ready(async function () {
   var previousMarkerState = null
 
   function handleMarkerClick(newMarker, marker) {
+    console.log(marker._id)
     const thongtinAd = `
   <div class="informflex">
     <div class="flex">
       <iconify-icon icon="carbon:information" style="color: #2065D1" width="25" height="25"></iconify-icon>
       <h2 style="color: #2065D1">Thông tin địa điểm quảng cáo</h2>
     </div>
-    ${marker.ads.length ? marker.ads.map((ad, index) => adInfo(ad, marker.address, index)).join("") :
+    ${marker.ads.length ? marker.ads.map((ad, index) => adInfo(ad, marker.address, index, marker._id)).join("") :
         `<h4>Chưa có biển quảng cáo</h4>`
       }
   </div>
 `;
 
-    function adInfo(ad, address, index) {
+    function adInfo(ad, address, index, id) {
       return `
       <div class='ad_item ad_item_${index}'>
       <h2>${ad.ad.type}</h2>
@@ -114,7 +122,7 @@ $(document).ready(async function () {
         }></div>
         <div class="flex">
           <button onclick="handleDetail(index=${index})">  <iconify-icon icon="ph:info-bold"  width="20" height="20"></iconify-icon>Chi tiết</button>
-          <button onclick="handleReport(address='${address}')">  <iconify-icon icon="ri:alert-fill"  width="20" height="20"></iconify-icon>Báo cáo vi phạm</button>
+          <button onclick="handleReport(address='${address}' , idPlace='${id}' , idAd ='${ad.ad._id}')">  <iconify-icon icon="ri:alert-fill"  width="20" height="20"></iconify-icon>Báo cáo vi phạm</button>
         </div>
         </div>
        `;
@@ -125,8 +133,9 @@ $(document).ready(async function () {
       return JSON.stringify(obj1) === JSON.stringify(obj2);
     }
 
-    if ($("#form_container") && $("#form_container").hasClass("active")) {
+    if (!$("#info_container").hasClass("active")) {
       $("#form_container").removeClass("active");
+      $("#report_container").removeClass("active");
       $("#info_container").addClass("active");
     }
 
@@ -187,9 +196,10 @@ $(document).ready(async function () {
 
 
       $("#ad_info").html("Chọn 1 điểm quảng cáo trên bản đồ").show();
-      if ($("#form_container") && $("#form_container").hasClass("active")) {
+      if (!$("#info_container").hasClass("active")) {
         $("#form_container").removeClass("active");
         $("#info_container").addClass("active");
+        $("#report_container").removeClass("active");
       }
 
       $("#ad_info").removeClass("active");
@@ -220,7 +230,7 @@ $(document).ready(async function () {
 });
 
 
-async function createReportForm(address) {
+async function createReportForm(address, idPlace, idAd) {
   const formHTML = `
   <iconify-icon onclick="back()" icon="mingcute:back-fill" style="color: black; margin-bottom : 12px" width="20" height="20"></iconify-icon>
   <form>
@@ -228,6 +238,12 @@ async function createReportForm(address) {
       <label for="display_name">Tên</label>
       <span class="label display_name">Độ dài tên vượt quá qui định</span>
       <input class="form-input" name="display_name" type="text" placeholder="Nhập tên không quá 50 kí tự" oninput="handleChangeInput(this)">
+    </div>
+
+    <div class='form-control'> 
+      <label for="email">Email</label>
+      <span class="label email">Vui lòng nhập đúng địa chỉ Email</span>
+      <input class="form-input" name="email" type="email" placeholder="Nhập Email" oninput="handleChangeInput(this)">
     </div>
 
     <div class='form-control'> 
@@ -243,8 +259,25 @@ async function createReportForm(address) {
 
     <div class='form-control'>
       <label for="about">Lí do báo cáo</label>
+      <span class="label edit">Vui lòng chỉ Upload tối đa 2 ảnh</span>
       <input name="about" type="hidden">
       <div class="editor"></div>
+    </div>
+
+    <div class='form-control' style="display : none;"> 
+      <input name="time" type="date" value="${new Date().toISOString().split('T')[0]}" >
+    </div>
+
+    <div class='form-control' style="display : none;"> 
+      <input name="idplace" type="text" value="${idPlace}" >
+    </div>
+
+    <div class='form-control' style="display : none;"> 
+      <input name="idad" type="text" value="${idAd}" >
+    </div>
+
+    <div class='form-control' style="display : none;"> 
+      <input name="status" type="text" value="0" >
     </div>
 
     <div class="capcha flex center">
@@ -282,31 +315,20 @@ async function createReportForm(address) {
     theme: 'snow'
   });
 
-  //quill 
+  quill.on('editor-change', function (eventName, ...args) {
+    if (eventName === 'text-change') {
+      var blocks = quill.getContents().ops;
 
-  var maxImageCount = 2;
+      var imageCount = blocks.reduce(function (count, block) {
+        if (block.insert && block.insert.image) {
+          return count + 1;
+        }
+        return count;
+      }, 0);
 
-  // Bắt sự kiện editor-change để theo dõi thay đổi nội dung
-  quill.on('editor-change', function (eventName, delta, oldDelta, source) {
-    if (source === 'user') { // Đảm bảo chỉ xử lý sự kiện do người dùng gây ra
-      var imageCount = countImages();
-      if (imageCount >= maxImageCount) {
-        quill.undo();
-        alert('Số lượng ảnh tối đa đã đạt được');
-      }
+      handleChangeInput({ name: 'about' }, imageCount)
     }
   });
-
-  function countImages() {
-    var delta = quill.getContents();
-    var imageCount = 0;
-    delta.ops.forEach(function (op) {
-      if (op.insert && op.insert.image) {
-        imageCount++;
-      }
-    });
-    return imageCount;
-  }
 
   var form = document.querySelector('form');
 
@@ -324,18 +346,42 @@ async function createReportForm(address) {
 
   form.onsubmit = async function (event) {
     event.preventDefault();
-    const formId = await getMaxFormId()
-    var about = document.querySelector('input[name=about]');
-    about.value = JSON.stringify(quill.getContents());
-    console.log(quill.getContents())
-    // localStorage.setItem(formId, JSON.stringify($(form).serializeArray()));
-    back()
+    if (document.querySelector(".display_name").classList.contains("active") || document.querySelector(".phone_number").classList.contains("active") || document.querySelector(".edit").classList.contains("active")) {
+      alert("Vui lòng nhập đúng thông tin")
+      return;
+    }
+    else {
+      const formId = await getMaxFormId()
+      const formdata = $(form).serializeArray();
+      var formData = new FormData();
+      formData.append("name", formdata[0].value);
+      formData.append("time", formdata[5].value);
+      formData.append("email", formdata[1].value);
+      formData.append("phone", formdata[2].value);
+      formData.append("idplace", formdata[6].value);
+      formData.append("idad", formdata[7].value);
+      formData.append("image", quill.getContents().ops.filter((about) => about.insert.image).map((about) => about.insert.image));
+      formData.append("context", quill.getContents().ops.filter((about) => !about.insert.image).map((about) => about.insert));
+      await fetch('https://server-ptudw.onrender.com/api/report', {
+        method: 'POST',
+        body: formData,
+      })
+
+      const filteredData = formdata.filter(item => {
+        const allowedNames = ['display_name', 'email', 'phone_number', 'location', 'time'];
+        return allowedNames.includes(item.name);
+      });
+
+      console.log(filteredData)
+      localStorage.setItem(formId, JSON.stringify(filteredData));
+      back()
+    }
   };
 
 }
 
-window.handleReport = function (address) {
-  createReportForm(address)
+window.handleReport = function (address, idPlace, idAd) {
+  createReportForm(address, idPlace, idAd)
 }
 
 window.handleDetail = function (index) {
@@ -360,6 +406,7 @@ window.handleDetail = function (index) {
 window.back = function () {
   $("#info_container").addClass("active");
   $("#form_container").removeClass("active");
+  $("#report_container").removeClass("active");
 }
 
 window.handleMouseEnter = function (mode) {
@@ -379,7 +426,6 @@ window.handleEnter = function (event) {
     handleClick();
   }
 }
-
 
 window.handleMouseLeave = function (mode) {
   if (mode) {
@@ -414,12 +460,14 @@ window.handleBlur = function () {
 window.handleClick = async function () {
   var searchDiv = document.querySelector('.search');
   var inputField = searchDiv.querySelector('input');
+  var loadingIcon = searchDiv.querySelector('.loading');
   const address = inputField.value;
 
   if (inputField.value === '') {
     inputField.focus();
   } else {
     try {
+      loadingIcon.classList.add('active');
       const response = await fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + address);
       const data = await response.json();
 
@@ -427,22 +475,18 @@ window.handleClick = async function () {
         var result = data[0];
         var lat = result.lat;
         var lon = result.lon;
-
         var marker = L.marker([lat, lon]).addTo(map);
-
-        // Xóa các Marker cũ nếu có
         clickMarkerLayer.clearLayers();
-
-        // Thêm Marker mới
         clickMarkerLayer.addLayer(marker);
-
-        // Đưa bản đồ về giữa Marker mới
         map.panTo([lat, lon]);
+        loadingIcon.classList.remove('active');
       } else {
         alert('Không tìm thấy địa chỉ');
+        loadingIcon.classList.remove('active');
       }
     } catch (error) {
       console.error('Error:', error);
+      loadingIcon.classList.remove('active');
     }
   }
 }
@@ -455,7 +499,7 @@ window.changeValueAndDisable = function (checkbox) {
   }
 }
 
-window.handleChangeInput = function (input) {
+window.handleChangeInput = function (input, imageCount) {
   if (input.name === 'display_name') {
     if (input.value.length > 50) {
       document.querySelector('.label.display_name').classList.add('active');
@@ -468,7 +512,48 @@ window.handleChangeInput = function (input) {
     } else {
       document.querySelector('.label.phone_number').classList.remove('active');
     }
+  } else if (input.name === 'email') {
+    if (!input.value.match(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/)) {
+      document.querySelector('.label.email').classList.add('active');
+    } else {
+      document.querySelector('.label.email').classList.remove('active');
+    }
+  }
+  else if (input.name === 'about') {
+    if (imageCount > 2) {
+      document.querySelector('.label.edit').classList.add('active');
+    } else {
+      document.querySelector('.label.edit').classList.remove('active');
+    }
   }
 }
 
+window.handleClickReport = function () {
+  $("#info_container").removeClass("active");
+  $("#form_container").removeClass("active");
+  $("#report_container").addClass("active");
 
+  function readFormData(startsWith) {
+    return Object.keys(localStorage)
+      .filter(key => key.startsWith(startsWith))
+      .reduce((formData, key) => {
+        const jsonString = localStorage.getItem(key);
+        formData[key] = JSON.parse(jsonString);
+        return formData;
+      }, {});
+  }
+
+  var formDataObjectFromLocalStorage = readFormData("form");
+
+  $("#report_container").html("");
+  for (let [key, value] of Object.entries(formDataObjectFromLocalStorage)) {
+    $("#report_container").append(`
+    <div class="report">
+      <div><strong>Tên người gửi: </strong>${value[0].value}</div>
+      <div><strong>Email đã dùng: </strong>${value[1].value}</div>
+      <div><strong>Số ĐT đã dùng: </strong>${value[2].value}</div>
+      <div><strong>Địa chỉ nơi báo cáo: </strong>${value[3].value}</div>
+      <div><strong>Thời gian gửi: </strong>${value[4].value}</div>
+    </div>`);
+  }
+}
