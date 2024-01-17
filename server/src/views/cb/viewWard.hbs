@@ -194,66 +194,34 @@
 
                     <div class="container-xxl flex-grow-1 container-p-y">
                         <h4 class="py-3 mb-4">
-                            <span class="text-muted fw-light">View/</span> Advertising sign
+                            <span class="text-muted fw-light">View/</span> Ward
                         </h4>
 
                         <!-- Basic Bootstrap Table -->
-                        {{#if (eq "admin" role)}}
-                            <div class="demo-inline-spacing" style="text-align: right;">
-                                <a href="/ads/create">
-                                    <button type="button" class="btn btn-outline-primary">
-                                        Create
-                                    </button>
-                                </a>
-                            </div>
-                            <br>
-                        {{/if}}
+                        <div class="demo-inline-spacing" style="text-align: right;">
+                            <a href="/cb/create-ward">
+                                <button type="button" class="btn btn-outline-primary">
+                                    Create
+                                </button>
+                            </a>
+                        </div>
+                        <br>
                         <div class="card">
                             <div class="table-responsive text-nowrap">
                                 <table class="table">
                                     <thead>
                                         <tr>
-                                            <th>Email</th>
-                                            <th>Address</th>
-                                            <th>Solution</th>
-                                            <th>Image</th>
-                                            <th>Status</th>
-                                            <th>Actions</th>
+                                            <th>Name</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody class="table-border-bottom-0">
-                                        {{#each report}}
+                                        {{#each ward}}
                                             <tr>
-                                                <td>
-                                                    <span class="fw-medium">{{this.email}}</span>
-                                                </td>
-                                                <td>
-                                                    <span class="fw-medium">{{this.address}}</span>
-                                                </td>
-                                                <td>
-                                                    <span class="fw-medium">{{this.solution}}</span>
-                                                </td>
-                                                <td>
-                                                    <ul
-                                                        class="list-unstyled users-list m-0 avatar-group d-flex align-items-center">
-                                                        <li data-bs-toggle="tooltip" data-popup="tooltip-custom"
-                                                            data-bs-placement="top" class="avatar avatar-xl pull-up">
-                                                            <img src="{{this.urlImg1}}" alt="Image" />
-                                                    </ul>
-                                                </td>
-                                                <td>
-                                                    {{#if (eq this.status 'Confirm')}}
-                                                        <span
-                                                            class="badge rounded-pill bg-label-primary me-1">Confirm</span>
-                                                    {{else if (eq this.status 'Process')}}
-                                                        <span
-                                                            class="badge rounded-pill bg-label-info me-1">Process</span>
-                                                    {{else if (eq this.status 'Success')}}
-                                                        <span
-                                                            class="badge rounded-pill bg-label-success me-1">Success</span>
-                                                    {{/if}}
-                                                </td>
 
+                                                <td>
+                                                    <span class="fw-medium">{{this.name}}</span>
+                                                </td>
 
                                                 <td>
                                                     <div class="dropdown">
@@ -264,10 +232,15 @@
 
                                                         <div class="dropdown-menu">
                                                             <a class="dropdown-item"
-                                                                href="/report/form?id={{this._id}}"><i
+                                                                href="/cb/editWard?id={{this._id}}"><i
                                                                     class="mdi mdi-pencil-outline me-1"></i>
-                                                                View/Edit</a>
+                                                                Edit</a>
+                                                            <a class="dropdown-item"
+                                                                href="/cb/deleteWard?id={{this._id}}"><i
+                                                                    class="mdi mdi-trash-can-outline me-1"></i>
+                                                                Delete</a>
                                                         </div>
+
                                                     </div>
                                                 </td>
                                             </tr>
@@ -275,26 +248,6 @@
                                     </tbody>
                                 </table>
                                 <hr class="my-3" />
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <nav aria-label="Page navigation">
-                                        <ul class="pagination pagination-outline-primary">
-                                            {{#each pages}}
-                                                <li class="page-item">
-                                                    <a class="page-link" href="/report/view?page={{this}}">{{this}}</a>
-                                                </li>
-                                            {{/each}}
-
-                                        </ul>
-                                        <ul class="pagination">
-                                            <li class="page-item">
-                                                <a class="page-link" style="pointer-events: none;"
-                                                    href="javascript:void(0);">Total page: {{totalPage}}</a>
-                                            </li>
-                                        </ul>
-                                    </nav>
-                                </div>
                             </div>
                         </div>
 

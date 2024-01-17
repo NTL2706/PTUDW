@@ -1,7 +1,8 @@
-import { adsModel, Ads } from "../models/adsModel.js";
+import { adsChangeModel } from "../models/changeModel.js";
 import configEnv from "../configs/configEnv.js";
 import { pagination } from "../utils/pagination.js";
 import moment from 'moment';
+import { adsModel } from "../models/adsModel.js";
 
 async function viewAds(req, res, next) {
     const page = req.query.page || 1;
@@ -13,17 +14,17 @@ async function viewAds(req, res, next) {
     }
 
     try {
-        const advertisements = await adsModel.find().lean()
+        const advertisements = await adsChangeModel.find().lean()
             .sort({ created_at: -1 })
             .limit(limit)
             .skip(limit * page - limit);
 
-        const countAds = await adsModel.countDocuments();
+        const countAds = await adsChangeModel.countDocuments();
 
         const totalPage = Math.ceil(countAds / limit);
 
         const pages = pagination(totalPage, page)
-        return res.render("ads/viewAds", { advertisements, pages, totalPage, role: user.role });
+        return res.render("change/viewAds", { advertisements, pages, totalPage, role: user.role });
     }
     catch (error) {
         console.log(error)
@@ -35,9 +36,9 @@ async function formAds(req, res, next) {
     const idAds = req.query.id;
     const user = req.user;
 
-    if (!user) {
-        return res.redirect("/auth/login");
-    }
+    // if (!user) {
+    //     return res.redirect("/auth/login");
+    // }
 
     try {
         const advertisement = await adsModel.findById(idAds).lean();
@@ -46,7 +47,7 @@ async function formAds(req, res, next) {
             advertisement.start_date = moment(advertisement.start_date).format('YYYY-MM-DDTHH:mm:ss');
             advertisement.end_date = moment(advertisement.end_date).format('YYYY-MM-DDTHH:mm:ss');
 
-            return res.render("ads/formAds", { advertisement, role: user.role });
+            return res.render("change/formAds", { advertisement, role: user.role });
         } else {
             return res.redirect("/ads/view");
         }
@@ -98,34 +99,4 @@ async function deleteAds(req, res, next) {
     }
 }
 
-async function createAds(req, res, next) {
-    // if (!req.user || req.user.role !== "admin") {
-    //     return res.redirect("/auth/login");
-    // }
-
-    let data = req.body;
-    const img = req.file;
-
-    const dataInsert = {
-        type: data.type,
-        height: data.height,
-        width: data.width,
-        content: data.content,
-        urlImg: img.path,
-        start_date: new Date(data.start_date),
-        end_date: new Date(data.end_date),
-        company: "Company B",
-    }
-
-    console.log(dataInsert)
-
-    try {
-        await adsModel.insertMany(dataInsert);
-        return res.redirect("/ads/view");
-    } catch (error) {
-        console.log(error);
-        return res.redirect("/ads/view");
-    }
-}
-
-export { viewAds, formAds, editAds, deleteAds, createAds }
+export { viewAds, formAds, editAds, deleteAds }

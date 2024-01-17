@@ -1,12 +1,11 @@
 import { Router } from "express";
-import { viewReport } from "../../controllers/reportController.js";
+import { viewReport, formReport, editReport } from "../../controllers/reportController.js";
 
 const route = Router();
 
 route.get("/view", viewReport);
-route.get("/form", )
-// route.get("/delete", deletePlace);
+route.get("/form", formReport)
 
-// route.post("/edit", editPlace);
+route.post("/edit", editReport);
 
 export default route;

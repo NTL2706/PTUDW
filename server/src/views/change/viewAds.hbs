@@ -1,0 +1,121 @@
+<div class="content-wrapper">
+    <!-- Content -->
+
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <h4 class="py-3 mb-4">
+            <span class="text-muted fw-light">View/</span> Advertising sign
+        </h4>
+
+        <!-- Basic Bootstrap Table -->
+        {{#if (eq "admin" role)}}
+        <div class="demo-inline-spacing" style="text-align: right;">
+            <a href="/ads/create">
+                <button type="button" class="btn btn-outline-primary">
+                    Create
+                </button>
+            </a>
+        </div>
+        <br>
+        {{/if}}
+        <div class="card">
+            <div class="table-responsive text-nowrap">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Content</th>
+                            <th>Height</th>
+                            <th>Width</th>
+                            <th>Content</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-border-bottom-0">
+                        {{#each advertisements}}
+                        <tr>
+
+                            <td>
+                                <span class="fw-medium">{{this.type}}</span>
+                            </td>
+                            <td>
+                                <span class="fw-medium">{{this.content}}</span>
+                            </td>
+                            <td>{{this.height}}</td>
+                            <td>{{this.width}}</td>
+                            <td>
+                                <ul class="list-unstyled users-list m-0 avatar-group d-flex align-items-center">
+                                    <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top"
+                                        class="avatar avatar-xl pull-up">
+                                        <img src="{{this.urlImg}}" alt="Image" />
+                                </ul>
+                            </td>
+                            <td>
+                                <span class="badge rounded-pill bg-label-primary me-1">Active</span>
+                            </td>
+
+
+                            <td>
+                                <div class="dropdown">
+                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
+                                        data-bs-toggle="dropdown">
+                                        <i class="mdi mdi-dots-vertical"></i>
+                                    </button>
+
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" href="/ads/form?id={{this._id}}"><i
+                                                class="mdi mdi-pencil-outline me-1"></i>
+                                            View/Edit</a>
+
+                                        {{#if (eq "admin" ../role)}}
+                                        <a class="dropdown-item" href="/ads/delete?id={{this._id}}"><i
+                                                class="mdi mdi-trash-can-outline me-1"></i>
+                                            Delete</a>
+                                        {{/if}}
+                                    </div>
+
+                                </div>
+                            </td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+                <hr class="my-3" />
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination pagination-outline-primary">
+                            {{#each pages}}
+                            <li class="page-item">
+                                <a class="page-link" href="/ads/view?page={{this}}">{{this}}</a>
+                            </li>
+                            {{/each}}
+
+                        </ul>
+                        <ul class="pagination">
+                            <li class="page-item">
+                                <a class="page-link" style="pointer-events: none;" href="javascript:void(0);">Total
+                                    page: {{totalPage}}</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contextual Classes -->
+
+
+        <!-- / Footer -->
+
+        <div class="content-backdrop fade"></div>
+
+    </div>
+    <!-- Content wrapper -->
+</div>
+<!-- / Layout page -->
+</div>
+
+<!-- Overlay -->
+<div class="layout-overlay layout-menu-toggle"></div>
+</div>

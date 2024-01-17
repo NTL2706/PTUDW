@@ -1,9 +1,9 @@
-import { func } from "joi";
 import configEnv from "../configs/configEnv.js";
 import { districtModel } from "../models/districtModel.js";
 import { reportModel } from "../models/reportModel.js";
 import { wardModel } from "../models/wardModel.js";
 import { pagination } from "../utils/pagination.js";
+import moment from 'moment';
 
 async function viewReport(req, res) {
     const user = req.user;
@@ -54,6 +54,69 @@ async function viewReport(req, res) {
     }
 }
 
+async function formReport(req, res) {
+    const idReport = req.query.id;
+    const user = req.user;
+
+    // if (!user) {
+    //     return res.redirect("/auth/login");
+    // }
+
+    try {
+        const report = await reportModel.findById(idReport).lean()
+            .populate([
+                {
+                    path: 'ads',
+                    model: 'Ads',
+                },
+                {
+                    path: 'place',
+                    model: 'Place'
+                }
+            ])
+            .exec();
+        if (report) {
+            report.created_at = moment(report.created_at).format('YYYY-MM-DDTHH:mm:ss');
+            return res.render("report/formReport", { report });
+        } else {
+            return res.redirect("/report/view");
+        }
+    } catch (error) {
+        console.log(error);
+        return res.redirect("/report/view");
+    }
+}
+
+async function editReport(req, res) {
+    const idReport = req.query.id;
+    const user = req.user;
+    const data = req.body;
+
+    // if (!user) {
+    //     return res.redirect("/auth/login");
+    // }
+
+    let dataUpdate = {}
+    if (data.solution) dataUpdate.solution = data.solution;
+    if (data.status) {
+        dataUpdate.status = data.status
+        // todo: send mail
+    }
+
+    console.log(dataUpdate)
+
+    try {
+        await reportModel.findByIdAndUpdate(idReport, dataUpdate)
+        return res.redirect("/report/view");
+    } catch (error) {
+        console.log(error);
+        return res.redirect("/report/view");
+    }
+}
+
+
 export {
-    viewReport
+    viewReport,
+    formReport,
+    editReport
 }
