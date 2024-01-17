@@ -260,7 +260,7 @@
   .layout-menu-fixed:not(.layout-menu-collapsed),
   .layout-menu-fixed-offcanvas:not(.layout-menu-collapsed) {
     .layout-page {
-      padding-left: $menu-width;
+      padding-left: 0;
     }
   }
 }

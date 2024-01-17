@@ -367,12 +367,13 @@ async function createReportForm(address, idPlace, idAd) {
         body: formData,
       })
 
+
+
       const filteredData = formdata.filter(item => {
         const allowedNames = ['display_name', 'email', 'phone_number', 'location', 'time'];
         return allowedNames.includes(item.name);
       });
 
-      console.log(filteredData)
       localStorage.setItem(formId, JSON.stringify(filteredData));
       back()
     }
