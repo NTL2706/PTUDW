@@ -9,7 +9,7 @@ async function createDistrict(req, res) {
 
     try {
         await districtModel.insertMany(data);
-        return res.redirect("/cb/create-district");
+        return res.redirect("/cb/viewDistrict");
     } catch (error) {
         console.log(error);
         return res.redirect("/");
@@ -24,7 +24,7 @@ async function createWard(req, res) {
 
     try {
         await wardModel.insertMany(data);
-        return res.redirect("/cb/create-ward");
+        return res.redirect(`/cb/viewWard?id=${data.district}`);
     } catch (error) {
         console.log(error);
         return res.redirect("/");

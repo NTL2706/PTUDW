@@ -1,12 +1,11 @@
 import { Router } from "express";
-import { viewPlace, formPlace, editPlace, deletePlace } from "../../controllers/placeController.js";
+import { viewReport, formReport, editReport } from "../../controllers/reportController.js";
 
 const route = Router();
 
-route.get("/view", viewPlace);
-route.get("/form", formPlace)
-route.get("/delete", deletePlace);
+route.get("/view", viewReport);
+route.get("/form", formReport)
 
-route.post("/edit", editPlace);
+route.post("/edit", editReport);
 
 export default route;
