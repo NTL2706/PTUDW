@@ -1,12 +1,13 @@
 <div class="layout-overlay layout-menu-toggle"></div>
 </div>
 
-
 <div class="content-wrapper">
     <div class="container-xxl flex-grow-1 container-p-y">
         <h4 class="py-3 mb-4">
             <span class="text-muted fw-light">Tables /</span> Basic Tables
         </h4>
+
+
 
         <!-- Basic Bootstrap Table -->
         <div class="card">
@@ -58,10 +59,39 @@
 
             </div>
         </div>
+        <button onclick=" document.getElementById('map').classList.toggle('active')" style="margin-top: 12px;"
+            class="btn btn-warning">Hiện maps</button>
         <button onclick="window.location.href='/cb/create-district'" style="margin-top: 12px;"
             class="btn btn-primary">Thêm Quận</button>
         <button onclick="window.location.href='/cb/create-ward'" style="margin-top: 12px;" class="btn btn-primary">Thêm
             Phường</button>
         <button onclick="window.location.href='/ads/view'" style="margin-top: 12px;" class="btn btn-info">Các loại
             bảng quảng cáo</button>
+
+
+
+        <div id="map" style="margin-top: 12px;"></div>
+
     </div>
+
+    <script>
+
+        $(document).ready(async function () {
+            var map = L.map("map")
+            navigator.geolocation.getCurrentPosition(function (position) {
+                var lat = position.coords.latitude;
+                var lon = position.coords.longitude;
+                map.setView([lat, lon], 13);
+            });
+
+            L.tileLayer(
+                "https://{s}.tile.thunderforest.com/atlas/{z}/{x}/{y}.png?apikey=a1cb0032c1264a8d9a88251c4866a2c3",
+                {
+                    attribution: "&copy; OpenStreetMap contributors, &copy; Thunderforest",
+                    apikey: "a1cb0032c1264a8d9a88251c4866a2c3",
+                }
+            ).addTo(map);
+
+        });
+
+    </script>

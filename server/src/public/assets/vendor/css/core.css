@@ -18527,3 +18527,12 @@ html:not(.layout-footer-fixed) .content-wrapper {
 .footer.bg-lighter hr {
   border-color: rgba(84, 79, 90, 0.0765686274);
 }
+
+#map {
+  height: 0;
+  transition: 0.3s ease;
+}
+
+#map.active {
+  height: 500px;
+}
