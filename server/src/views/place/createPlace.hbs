@@ -648,9 +648,16 @@
                                     <div class="card-body">
                                         <form method="POST" action="/place/create">
                                             <div class="form-floating form-floating-outline mb-4">
-                                                <input type="text" class="form-control" id="basic-default-fullname"
-                                                    value="" name="type" />
-                                                <label for="basic-default-fullname">Type</label>
+                                                <select class="form-select" id="exampleFormControlSelect1"
+                                                    aria-label="Default select example" name="type">
+                                                    {{#each typePlace}}
+                                                        <option value="{{this.name}}">
+                                                            {{this.name}}
+                                                        </option>
+                                                    {{/each}}
+                                                </select>
+                                                <label for="exampleFormControlSelect1">Open this select
+                                                    type</label>
                                             </div>
                                             <div class="form-floating form-floating-outline mb-4">
                                                 <input type="text" class="form-control" id="basic-default-fullname"
@@ -658,9 +665,27 @@
                                                 <label for="basic-default-fullname">Address</label>
                                             </div>
                                             <div class="form-floating form-floating-outline mb-4">
+                                                <select class="form-select" id="exampleFormControlSelect1"
+                                                    aria-label="Default select example" name="district"
+                                                    onchange="updateSecondSelect(this.value)">
+                                                    {{#each district}}
+                                                        <option value="{{this._id}}">{{this.name}}</option>
+                                                    {{/each}}
+                                                </select>
+                                                <label for="exampleFormControlSelect1">Open this select
+                                                    district</label>
+                                            </div>
+
+                                            <div class="form-floating form-floating-outline mb-4">
+                                                <select class="form-select" id="selectWard"
+                                                    aria-label="Default select example" name="option">
+                                                </select>
+                                                <label for="selectDistrict2">Open this select ward</label>
+                                            </div>
+                                            <div class="form-floating form-floating-outline mb-4">
                                                 <input type="text" class="form-control" id="basic-default-company"
-                                                    value="" name="long" />
-                                                <label for="basic-default-company">Long</label>
+                                                    value="" name="lon" />
+                                                <label for="basic-default-company">Lon</label>
                                             </div>
                                             <div class="form-floating form-floating-outline mb-4">
                                                 <input type="text" class="form-control" id="basic-default-company"
@@ -668,23 +693,17 @@
                                                 <label for="basic-default-company">Lat</label>
                                             </div>
                                             <div class="form-floating form-floating-outline mb-4">
-                                                <select class="form-select" id="exampleFormControlSelect1"
-                                                    aria-label="Default select example" name="ads">
-                                                    <option value="{{placeAds.ads._id}}" selected>{{placeAds.ads.type}}-
-                                                        id:
-                                                        {{placeAds.ads._id}}
-                                                    </option>
+                                                <select multiple class="form-select h-px-100"
+                                                    id="exampleFormControlSelect2" aria-label="Multiple select example"
+                                                    name="ads">
                                                     {{#each advertisements}}
-                                                        <option value="{{this._id}}">{{this.type}}
-                                                            - id:
-                                                            {{this._id}}
+                                                        <option value="{{this._id}}">{{this.type}} - id: {{this._id}}
                                                         </option>
                                                     {{/each}}
                                                 </select>
-                                                <label for="exampleFormControlSelect1">Open this select
-                                                    advertising sign</label>
+                                                <label for="exampleFormControlSelect2">Open this select advertising
+                                                    sign</label>
                                             </div>
-
                                             <button type="submit" class="btn btn-primary">
                                                 Create
                                             </button>
@@ -767,4 +786,29 @@
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <script>
+        async function updateSecondSelect(selectedDistrictId) {
+            try {
+                // Gọi API để lấy dữ liệu cho select thứ hai
+                const response = await fetch(`/cb/get-ward?district=${selectedDistrictId}`);
+                const data = await response.json();
+
+                // Lấy thẻ select thứ hai
+                const select2 = document.getElementById('selectWard');
+
+                // Xóa tất cả các options hiện có
+                select2.innerHTML = '';
+
+                // Thêm options mới từ dữ liệu lấy được từ API
+                data.forEach(ward => {
+                    const option = document.createElement('option');
+                    option.value = ward._id;
+                    option.text = ward.name;
+                    select2.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error updating second select: ', error);
+            }
+        }
+    </script>
 </body>

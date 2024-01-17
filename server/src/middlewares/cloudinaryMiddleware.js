@@ -16,9 +16,9 @@ const storage = new CloudinaryStorage({
     allowedFormats: ['jpg', 'png'],
     params: {
         folder: "test",
-    }
+    },
 });
 
-const uploadCloud = multer({ storage });
+const uploadCloud = multer({ storage, limits: { fieldSize: 25 * 1024 * 1024 } });
 
 export default uploadCloud;

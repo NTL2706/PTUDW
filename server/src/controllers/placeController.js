@@ -17,7 +17,10 @@ async function viewPlace(req, res, next) {
             .sort({ created_at: -1 })
             .limit(limit)
             .skip(limit * page - limit)
-            .populate('ads')
+            .populate({
+                path: 'ads.ad',
+                model: 'Ads',
+            })
             .exec();
 
 
@@ -27,6 +30,7 @@ async function viewPlace(req, res, next) {
 
         const pages = pagination(totalPage, page)
 
+        console.log(placeAds[0].ads[0])
         return res.render("place/viewPlace", { placeAds, pages, totalPage, role: user.role });
     }
     catch (error) {
@@ -93,4 +97,33 @@ async function deletePlace(req, res, next) {
     }
 }
 
-export { viewPlace, formPlace, editPlace, deletePlace };
+async function createPlace(req, res, next) {
+    const data = req.body;
+
+    const dataInsert = {
+        address: data.address,
+        lon: data.lon,
+        lat: data.lat,
+        type: data.type,
+        ads: data.ads.map(adId => {
+            return {
+                ad: adId,
+                quantity: 1
+            };
+        }),
+        ward: data.option
+    }
+
+    console.log(dataInsert)
+
+    try {
+        await placeModel.insertMany(dataInsert);
+        return res.redirect("/place/view");
+    }
+    catch (error) {
+        console.log(error);
+        return res.redirect("/place/view");
+    }
+}
+
+export { viewPlace, formPlace, editPlace, deletePlace, createPlace };

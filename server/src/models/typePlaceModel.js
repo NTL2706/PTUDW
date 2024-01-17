@@ -12,16 +12,12 @@ const typePlaceModel = mongoose.model('TypePlace', TypePlace);
 
 const seedTypePlace = async () => {
     const defaultTypeAdsData = [
-        { name: 'Trụ bảng hiflex' },
-        { name: 'Trụ màn hình điện tử LED' },
-        { name: 'Trụ hộp đèn' },
-        { name: 'Bảng hiflex ốp tường' },
-        { name: 'Màn hình điện tử ốp tường' },
-        { name: 'Trụ treo băng rôn dọc' },
-        { name: 'Trụ treo băng rôn ngang' },
-        { name: 'Trụ/Cụm pano' },
-        { name: 'Cổng chào' },
+        { name: 'Đất công/Công viên/Hành lang an toàn giao thông' },
+        { name: 'Đất tư nhân/Nhà ở riêng lẻ' },
         { name: 'Trung tâm thương mại' },
+        { name: ' Chợ' },
+        { name: 'Cây xăng' },
+        { name: 'Nhà chờ xe buýt' },
     ];
 
     try {
