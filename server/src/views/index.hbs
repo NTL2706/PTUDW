@@ -36,14 +36,19 @@
                                         data-bs-toggle="dropdown">
                                         <i class="mdi mdi-dots-vertical"></i>
                                     </button>
+
                                     <div class="dropdown-menu">
-                                        <a class="dropdown-item" href="javascript:void(0);"><i
-                                                class="mdi mdi-pencil-outline me-2"></i>
+                                        <a class="dropdown-item" href="/cb/viewWard?id={{this._id}}"><i
+                                                class="mdi mdi-view-array-outline me-1"></i>
+                                            View ward</a>
+                                        <a class="dropdown-item" href="/cb/editDistrict?id={{this._id}}"><i
+                                                class="mdi mdi-pencil-outline me-1"></i>
                                             Edit</a>
-                                        <a class="dropdown-item" href="javascript:void(0);"><i
-                                                class="mdi mdi-trash-can-outline me-2"></i>
+                                        <a class="dropdown-item" href="/cb/deleteDistrict?id={{this._id}}"><i
+                                                class="mdi mdi-trash-can-outline me-1"></i>
                                             Delete</a>
                                     </div>
+
                                 </div>
                             </td>
                         </tr>
@@ -53,8 +58,10 @@
 
             </div>
         </div>
-        <button onclick="window.location.href='/cb/create-district'" style="margin-top: 6px;"
+        <button onclick="window.location.href='/cb/create-district'" style="margin-top: 12px;"
             class="btn btn-primary">Thêm Quận</button>
-        <button onclick="window.location.href='/cb/create-ward'" style="margin-top: 6px;" class="btn btn-primary">Thêm
+        <button onclick="window.location.href='/cb/create-ward'" style="margin-top: 12px;" class="btn btn-primary">Thêm
             Phường</button>
+        <button onclick="window.location.href='/ads/view'" style="margin-top: 12px;" class="btn btn-info">Các loại
+            bảng quảng cáo</button>
     </div>
