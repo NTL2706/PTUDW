@@ -13,19 +13,11 @@
                             {{placeAds._id}}</small>
                     </div>
                     <div class="card-body">
-                        <form method="POST" action="/place/edit?id={{placeAds._id}}">
+                        <form method="POST" action="/change/editPlace?id={{placeAds._id}}">
                             <div class="form-floating form-floating-outline mb-4">
-                                <select class="form-select" id="exampleFormControlSelect1"
-                                    aria-label="Default select example" name="type">
-                                    <option selected>{{placeAds.type}}</option>
-                                    {{#each typePlace}}
-                                        <option value="{{this.name}}">
-                                            {{this.name}}
-                                        </option>
-                                    {{/each}}
-                                </select>
-                                <label for="exampleFormControlSelect1">Open this select
-                                    type</label>
+                                <input type="text" class="form-control" id="basic-default-fullname"
+                                    value="{{placeAds.type}}" name="type" />
+                                <label for="basic-default-fullname">Type</label>
                             </div>
                             <div class="form-floating form-floating-outline mb-4">
                                 <input type="text" class="form-control" id="basic-default-fullname"
@@ -43,28 +35,24 @@
                                 <label for="basic-default-company">Lat</label>
                             </div>
                             <div class="form-floating form-floating-outline mb-4">
-                                <select class="form-select" id="exampleFormControlSelect1"
-                                    aria-label="Default select example" name="ads">
-                                    <option value="{{placeAds.ads._id}}" selected>{{placeAds.ads.type}}-
-                                        id:
-                                        {{placeAds.ads._id}}
-                                    </option>
+                                <select multiple class="form-select h-px-100" id="exampleFormControlSelect2"
+                                    aria-label="Multiple select example" name="ads">
                                     {{#each advertisements}}
-                                        <option value="{{this._id}}">{{this.type}}
-                                            - id:
-                                            {{this._id}}
+                                        <option value="{{this._id}}">{{this.type}} - id: {{this._id}}
                                         </option>
                                     {{/each}}
                                 </select>
-                                <label for="exampleFormControlSelect1">Open this select
-                                    advertising sign</label>
+                                <label for="exampleFormControlSelect2">Open this select advertising
+                                    sign</label>
                             </div>
-
-                            {{#if (eq "admin" role)}}
-                                <button type="submit" class="btn btn-primary">
-                                    Edit
-                                </button>
-                            {{/if}}
+                            <div class="form-floating form-floating-outline mb-4">
+                                <textarea class="form-control h-px-100" id="exampleFormControlTextarea1"
+                                    placeholder="Write reason here..." name="reason"></textarea>
+                                <label for="exampleFormControlTextarea1">Reason</label>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                Submit
+                            </button>
                         </form>
                     </div>
                 </div>

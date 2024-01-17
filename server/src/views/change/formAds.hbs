@@ -13,7 +13,8 @@
                             {{advertisement._id}}</small>
                     </div>
                     <div class="card-body">
-                        <form method="POST" action="/ads/edit?id={{advertisement._id}}" enctype="multipart/form-data">
+                        <form method="POST" action="/change/editAds?id={{advertisement._id}}"
+                            enctype="multipart/form-data">
                             <div class="form-floating form-floating-outline mb-4">
                                 <input type="text" class="form-control" id="basic-default-fullname"
                                     value="{{advertisement.type}}" name="type" />
@@ -58,14 +59,15 @@
                                 <img id="ad_img" src="{{advertisement.urlImg}}" alt="image" width="200px"
                                     height="200px">
                             </div>
-                            <button type="submit" class="btn btn-primary">
-                                Submit
-                            </button>
                             <div class="form-floating form-floating-outline mb-4">
                                 <textarea class="form-control h-px-100" id="exampleFormControlTextarea1"
                                     placeholder="Write reason here..." name="reason"></textarea>
                                 <label for="exampleFormControlTextarea1">Reason</label>
                             </div>
+                            <button type="submit" class="btn btn-primary">
+                                Submit
+                            </button>
+
                         </form>
                     </div>
                 </div>

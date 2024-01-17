@@ -99,9 +99,9 @@ async function deleteAds(req, res, next) {
 }
 
 async function createAds(req, res, next) {
-    // if (!req.user || req.user.role !== "admin") {
-    //     return res.redirect("/auth/login");
-    // }
+    if (!req.user || req.user.role !== "admin") {
+        return res.redirect("/auth/login");
+    }
 
     let data = req.body;
     const img = req.file;
@@ -116,8 +116,6 @@ async function createAds(req, res, next) {
         end_date: new Date(data.end_date),
         company: "Company B",
     }
-
-    console.log(dataInsert)
 
     try {
         await adsModel.insertMany(dataInsert);

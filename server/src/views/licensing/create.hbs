@@ -8,17 +8,60 @@
             <div class="col-xl">
                 <div class="card mb-4">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Create advertising sign</h5>
+                        <h5 class="mb-0">Create place advertising sign</h5>
                     </div>
                     <div class="card-body">
-                        <form method="POST" action="/ads/create" enctype="multipart/form-data">
+                        <form method="POST" action="/licensing/create" enctype="multipart/form-data">
+                            <div class="form-floating form-floating-outline mb-4">
+                                <input type="text" class="form-control" id="basic-default-company"
+                                    placeholder="Company A" name="companyName" />
+                                <label for="basic-default-company">Company Name</label>
+                            </div>
+                            <div class="form-floating form-floating-outline mb-4">
+                                <input type="text" class="form-control" id="basic-default-company"
+                                    placeholder="company@email.com" name="companyEmail" />
+                                <label for="basic-default-company">Company Email</label>
+                            </div>
+                            <div class="form-floating form-floating-outline mb-4">
+                                <input type="text" class="form-control" id="basic-default-company"
+                                    placeholder="0763943463" name="companyPhone" />
+                                <label for="basic-default-company">Company Phone</label>
+                            </div>
                             <div class="form-floating form-floating-outline mb-4">
                                 <select class="form-select" id="exampleFormControlSelect1"
                                     aria-label="Default select example" name="type">
+                                    {{#each typePlace}}
+                                        <option value="{{this.name}}">
+                                            {{this.name}}
+                                        </option>
+                                    {{/each}}
+                                </select>
+                                <label for="exampleFormControlSelect1">Open this select
+                                    type</label>
+                            </div>
+                            <div class="form-floating form-floating-outline mb-4">
+                                <input type="text" class="form-control" id="basic-default-fullname" value=""
+                                    name="address" />
+                                <label for="basic-default-fullname">Address</label>
+                            </div>
+                            <div class="form-floating form-floating-outline mb-4">
+                                <input type="text" class="form-control" id="basic-default-company" value=""
+                                    name="lon" />
+                                <label for="basic-default-company">Lon</label>
+                            </div>
+                            <div class="form-floating form-floating-outline mb-4">
+                                <input type="text" class="form-control" id="basic-default-company" value=""
+                                    name="lat" />
+                                <label for="basic-default-company">Lat</label>
+                            </div>
+
+                            <div class="form-floating form-floating-outline mb-4">
+                                <select class="form-select" id="exampleFormControlSelect1"
+                                    aria-label="Default select example" name="typeAds">
                                     {{#each typeAds}}
-                                    <option value="{{this.name}}">
-                                        {{this.name}}
-                                    </option>
+                                        <option value="{{this.name}}">
+                                            {{this.name}}
+                                        </option>
                                     {{/each}}
                                 </select>
                                 <label for="exampleFormControlSelect1">Open this select
@@ -63,10 +106,11 @@
                                 <img id="ad_img" src="{{advertisement.urlImg}}" alt="image" width="200px"
                                     height="200px">
                             </div>
+
                             <button type="submit" class="btn btn-primary">
                                 Create
                             </button>
-                            <button onclick="window.location.href='/ads/view'" type="button" class="btn btn-secondary">
+                            <button type="button" onclick="window.history.back();" class="btn btn-secondary">
                                 Back
                             </button>
                         </form>

@@ -6,6 +6,7 @@ import cbRoute from "./cbRoute.js";
 import apiRoute from "./api/index.js";
 import reportRoute from "./report/index.js";
 import changeRoute from "./change/index.js";
+import licensingRoute from "./licensingRoute.js";
 
 function app_route(app) {
     app.use("/", pageRoute);
@@ -15,6 +16,7 @@ function app_route(app) {
     app.use("/place", placeRoute);
     app.use("/report", reportRoute);
     app.use("/change", changeRoute);
+    app.use("/licensing", licensingRoute);
 
     app.use("/api", apiRoute);
 }

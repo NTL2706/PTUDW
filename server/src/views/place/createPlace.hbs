@@ -13,9 +13,16 @@
                     <div class="card-body">
                         <form method="POST" action="/place/create">
                             <div class="form-floating form-floating-outline mb-4">
-                                <input type="text" class="form-control" id="basic-default-fullname" value=""
-                                    name="type" />
-                                <label for="basic-default-fullname">Type</label>
+                                <select class="form-select" id="exampleFormControlSelect1"
+                                    aria-label="Default select example" name="type">
+                                    {{#each typePlace}}
+                                        <option value="{{this.name}}">
+                                            {{this.name}}
+                                        </option>
+                                    {{/each}}
+                                </select>
+                                <label for="exampleFormControlSelect1">Open this select
+                                    type</label>
                             </div>
                             <div class="form-floating form-floating-outline mb-4">
                                 <input type="text" class="form-control" id="basic-default-fullname" value=""
@@ -24,8 +31,8 @@
                             </div>
                             <div class="form-floating form-floating-outline mb-4">
                                 <input type="text" class="form-control" id="basic-default-company" value=""
-                                    name="long" />
-                                <label for="basic-default-company">Long</label>
+                                    name="lon" />
+                                <label for="basic-default-company">Lon</label>
                             </div>
                             <div class="form-floating form-floating-outline mb-4">
                                 <input type="text" class="form-control" id="basic-default-company" value=""
@@ -40,10 +47,10 @@
                                         {{placeAds.ads._id}}
                                     </option>
                                     {{#each advertisements}}
-                                    <option value="{{this._id}}">{{this.type}}
-                                        - id:
-                                        {{this._id}}
-                                    </option>
+                                        <option value="{{this._id}}">{{this.type}}
+                                            - id:
+                                            {{this._id}}
+                                        </option>
                                     {{/each}}
                                 </select>
                                 <label for="exampleFormControlSelect1">Open this select

@@ -2,6 +2,7 @@ import { placeModel, Place } from "../models/placeModel.js";
 import { adsModel, Ads } from "../models/adsModel.js";
 import configEnv from "../configs/configEnv.js";
 import { pagination } from "../utils/pagination.js";
+import { typePlaceModel } from "../models/typePlaceModel.js";
 
 async function viewPlace(req, res, next) {
     const page = req.query.page || 1;
@@ -30,7 +31,6 @@ async function viewPlace(req, res, next) {
 
         const pages = pagination(totalPage, page)
 
-        console.log(placeAds[0].ads[0])
         return res.render("place/viewPlace", { placeAds, pages, totalPage, role: user.role });
     }
     catch (error) {
@@ -50,9 +50,10 @@ async function formPlace(req, res, next) {
     try {
         const placeAds = await placeModel.findById(idAds).lean().populate('ads').exec();
         const advertisements = await adsModel.find().select('_id type').lean();
+        const typePlace = await typePlaceModel.find().lean();
 
         if (placeAds) {
-            return res.render("place/formPlace", { placeAds, advertisements, role: user.role });
+            return res.render("place/formPlace", { placeAds, advertisements, typePlace, role: user.role });
         } else {
             return res.redirect("/place/view");
         }
@@ -113,8 +114,6 @@ async function createPlace(req, res, next) {
         }),
         ward: data.option
     }
-
-    console.log(dataInsert)
 
     try {
         await placeModel.insertMany(dataInsert);

@@ -8,14 +8,14 @@
 
         <!-- Basic Bootstrap Table -->
         {{#if (eq "admin" role)}}
-        <div class="demo-inline-spacing" style="text-align: right;">
-            <a href="/place/create">
-                <button type="button" class="btn btn-outline-primary">
-                    Create
-                </button>
-            </a>
-        </div>
-        <br>
+            <div class="demo-inline-spacing" style="text-align: right;">
+                <a href="/place/create">
+                    <button type="button" class="btn btn-outline-primary">
+                        Create
+                    </button>
+                </a>
+            </div>
+            <br>
         {{/if}}
         <div class="card">
             <div class="table-responsive text-nowrap">
@@ -23,7 +23,7 @@
                     <thead>
                         <tr>
                             <th>Address</th>
-                            <th>Long</th>
+                            <th>Lon</th>
                             <th>Lat</th>
                             <th>Type</th>
                             <th>Advertising signs</th>
@@ -32,40 +32,56 @@
                     </thead>
                     <tbody class="table-border-bottom-0">
                         {{#each placeAds}}
-                        <tr>
+                            <tr>
 
-                            <td>
-                                <span class="fw-medium">{{this.address}}</span>
-                            </td>
-                            <td>{{this.long}}</td>
-                            <td>{{this.lat}}</td>
-                            <td>{{this.type}}</td>
-                            <td>{{this.ads.type}}</td>
-                            <td>
-                                <span class="badge rounded-pill bg-label-primary me-1">Active</span>
-                            </td>
-                            <td>
-                                <div class="dropdown">
-                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
-                                        data-bs-toggle="dropdown">
-                                        <i class="mdi mdi-dots-vertical"></i>
-                                    </button>
+                                <td>
+                                    <span class="fw-medium">{{this.address}}</span>
+                                </td>
+                                <td>{{this.lon}}</td>
+                                <td>{{this.lat}}</td>
+                                <td>{{this.type}}</td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
+                                            data-bs-toggle="dropdown">
+                                            <i class="mdi mdi-dots-vertical"></i>
+                                        </button>
 
-                                    <div class="dropdown-menu">
-                                        <a class="dropdown-item" href="/place/form?id={{this._id}}"><i
-                                                class="mdi mdi-pencil-outline me-1"></i>
-                                            View/Edit</a>
-
-                                        {{#if (eq "admin" ../role)}}
-                                        <a class="dropdown-item" href="/place/delete?id={{this._id}}"><i
-                                                class="mdi mdi-trash-can-outline me-1"></i>
-                                            Delete</a>
-                                        {{/if}}
+                                        <div class="dropdown-menu">
+                                            {{#each this.ads}}
+                                                <span class="dropdown-item">{{this.ad.type}}</span>
+                                            {{/each}}
+                                        </div>
                                     </div>
+                                </td>
+                                <td>
+                                    <span class="badge rounded-pill bg-label-primary me-1">Active</span>
+                                </td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
+                                            data-bs-toggle="dropdown">
+                                            <i class="mdi mdi-dots-vertical"></i>
+                                        </button>
 
-                                </div>
-                            </td>
-                        </tr>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" href="/place/form?id={{this._id}}"><i
+                                                    class="mdi mdi-pencil-outline me-1"></i>
+                                                View/Edit</a>
+                                            {{#if (eq "admin" ../role)}}
+                                                <a class="dropdown-item" href="/place/delete?id={{this._id}}"><i
+                                                        class="mdi mdi-trash-can-outline me-1"></i>
+                                                    Delete</a>
+                                            {{else}}
+                                                <a class="dropdown-item" href="/change/formPlace?id={{this._id}}"><i
+                                                        class="mdi mdi-shield-edit-outline me-1"></i>
+                                                    Request Edit</a>
+                                            {{/if}}
+                                        </div>
+
+                                    </div>
+                                </td>
+                            </tr>
                         {{/each}}
                     </tbody>
                 </table>
@@ -77,9 +93,9 @@
                     <nav aria-label="Page navigation">
                         <ul class="pagination pagination-outline-primary">
                             {{#each pages}}
-                            <li class="page-item">
-                                <a class="page-link" href="/place/view?page={{this}}">{{this}}</a>
-                            </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="/place/view?page={{this}}">{{this}}</a>
+                                </li>
                             {{/each}}
 
                         </ul>

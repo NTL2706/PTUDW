@@ -32,10 +32,6 @@ export async function createAccount(req, res) {
     const salt = bcrypt.genSaltSync(Number(dotConfig.SALTROUNDS));
     const hash = bcrypt.hashSync(password, salt);
 
-    console.log(req.body.option)
-    console.log(req.body.email)
-    console.log(req.body.role)
-
     try {
         const user = new userModel({
             name: name,

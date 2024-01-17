@@ -18,6 +18,7 @@ const AdsChange = new Schema({
     active: { type: Boolean, default: false },
     idChange: String,
     reason: String,
+    email: String,
 }, {
     collection: "AdsChange"
 })

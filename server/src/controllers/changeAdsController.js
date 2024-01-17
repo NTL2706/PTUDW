@@ -36,9 +36,9 @@ async function formAds(req, res, next) {
     const idAds = req.query.id;
     const user = req.user;
 
-    // if (!user) {
-    //     return res.redirect("/auth/login");
-    // }
+    if (!user) {
+        return res.redirect("/auth/login");
+    }
 
     try {
         const advertisement = await adsModel.findById(idAds).lean();
@@ -69,13 +69,17 @@ async function editAds(req, res, next) {
 
     dataUpdate.start_date = new Date(dataUpdate.start_date);
     dataUpdate.end_date = new Date(dataUpdate.end_date);
-
-    if (image) dataUpdate.urlImg = image.path;
+    dataUpdate.idChange = idAds
+    dataUpdate.email = user.email
 
     try {
-        await adsModel.findByIdAndUpdate(idAds, dataUpdate);
-        // return res.redirect(`/ads/form?id=${idAds}`);
-        return res.redirect("/ads/view")
+        const adsOld = await adsModel.findById(idAds)
+        if (image) dataUpdate.urlImg = image.path;
+        else dataUpdate.urlImg = adsOld.urlImg;
+
+
+        await adsChangeModel.insertMany(dataUpdate);
+        return res.redirect("/change/viewAds")
     } catch (error) {
         console.log(error);
         return res.redirect("/ads/view");
@@ -91,12 +95,48 @@ async function deleteAds(req, res, next) {
     }
 
     try {
-        await adsModel.findByIdAndDelete(idAds);
-        return res.redirect(`/ads/view`);
+        await adsChangeModel.findByIdAndDelete(idAds);
+        return res.redirect(`/change/viewAds`);
     } catch (error) {
         console.log(error);
         return res.redirect("/ads/view");
     }
 }
 
-export { viewAds, formAds, editAds, deleteAds }
+async function approveAds(req, res) {
+    const idAds = req.query.id;
+    const user = req.user;
+
+    if (!user) {
+        return res.redirect("/auth/login");
+    }
+
+    try {
+        const adsEdit = await adsChangeModel.findById(idAds).lean()
+
+        const dataUpdate = {
+            type: adsEdit.type,
+            height: adsEdit.height,
+            width: adsEdit.width,
+            content: adsEdit.content,
+            urlImg: adsEdit.urlImg,
+
+            start_date: adsEdit.start_date,
+            end_date: adsEdit.end_date,
+
+            company: adsEdit.company,
+        }
+
+        console.log(adsEdit)
+
+        await adsModel.findByIdAndUpdate(adsEdit.idChange, dataUpdate);
+        await adsChangeModel.findByIdAndUpdate(idAds, { active: true });
+        // return res.redirect(`/ads/form?id=${idAds}`);
+        return res.redirect("/ads/view")
+    } catch (error) {
+        console.log(error);
+        return res.redirect("/ads/view");
+    }
+}
+
+export { viewAds, formAds, editAds, deleteAds, approveAds }
