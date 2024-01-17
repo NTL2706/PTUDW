@@ -10,6 +10,8 @@ const configEnv = {
     "CLOUDINARY_NAME": process.env.CLOUDINARY_NAME,
     "CLOUDINARY_KEY": process.env.CLOUDINARY_KEY,
     "CLOUDINARY_SECRET": process.env.CLOUDINARY_SECRET,
+    "MAIL_USER_NAME": process.env.MAIL_USER_NAME,
+    "MAIL_PASSWORD": process.env.MAIL_PASSWORD,
 }
 
 export default configEnv;

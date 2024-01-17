@@ -4,6 +4,7 @@ import { licensingModel } from "../models/licensingModel.js";
 import { placeModel } from "../models/placeModel.js";
 import { pagination } from "../utils/pagination.js";
 import moment from 'moment';
+import { getIO } from "../socket.js";
 
 async function create(req, res) {
     const user = req.user;
@@ -101,6 +102,10 @@ async function approved(req, res) {
         }
         await placeModel.insertMany(dataPlace);
         await licensingModel.findByIdAndUpdate(id, { active: true });
+
+        const io = getIO()
+        io.emit(`check`, "OKE");
+
         res.redirect("/licensing/view");
     } catch (error) {
         console.log(error);
@@ -116,6 +121,7 @@ async function form(req, res) {
         const licensing = await licensingModel.findById(id).lean()
         licensing.start_date = moment(licensing.start_date).format('YYYY-MM-DDTHH:mm:ss');
         licensing.end_date = moment(licensing.end_date).format('YYYY-MM-DDTHH:mm:ss');
+
 
         res.render("licensing/form", { licensing, role: user.role });
     } catch (error) {

@@ -2,6 +2,7 @@ import configEnv from "../configs/configEnv.js";
 import { districtModel } from "../models/districtModel.js";
 import { reportModel } from "../models/reportModel.js";
 import { wardModel } from "../models/wardModel.js";
+import { sendMail } from "../utils/mailUtil.js";
 import { pagination } from "../utils/pagination.js";
 import moment from 'moment';
 
@@ -92,18 +93,17 @@ async function editReport(req, res) {
     const user = req.user;
     const data = req.body;
 
-    // if (!user) {
-    //     return res.redirect("/auth/login");
-    // }
+    if (!user) {
+        return res.redirect("/auth/login");
+    }
 
     let dataUpdate = {}
     if (data.solution) dataUpdate.solution = data.solution;
     if (data.status) {
         dataUpdate.status = data.status
         // todo: send mail
+        sendMail(user.email, "Update report status", `Currently the report is in a status of ${data.status}`)
     }
-
-    console.log(dataUpdate)
 
     try {
         await reportModel.findByIdAndUpdate(idReport, dataUpdate)

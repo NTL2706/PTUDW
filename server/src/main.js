@@ -9,6 +9,8 @@ import "./configs/connectDb.js";
 import { fileURLToPath } from 'url';
 import cors from "cors";
 import path from "path";
+import { initializeSocket } from "./socket.js"
+
 
 const PORT = dotConfig.PORT || 5000;
 const __filename = fileURLToPath(import.meta.url);
@@ -41,8 +43,11 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(passport.initialize());
 app.use(passport.session());
 
+initializeSocket(app);
+
 app_route(app)
 
 app.listen(PORT, () => {
     console.log(`connected to port ${PORT}`)
 })
+
