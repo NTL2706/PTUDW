@@ -24,7 +24,7 @@ async function viewAds(req, res, next) {
 
         const pages = pagination(totalPage, page)
         // console.log(advertisements)
-
+        console.log(advertisements)
         return res.render("ads/viewAds", { advertisements, pages, totalPage, role: user.role });
     }
     catch (error) {
