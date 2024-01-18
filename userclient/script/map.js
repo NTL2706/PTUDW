@@ -28,8 +28,8 @@ $(document).ready(async function () {
 
     async function fetchData() {
         try {
-            // const response = await fetch('https://server-ptudw.onrender.com/api/placeAds?fbclid=IwAR3fRxRkrq-S7z1miVQKr41r3t-uuHHu30I5oPVozm8mN2V_PkieJMC4vE8');
-            const response = await fetch('http://localhost:5000/api/placeAds?fbclid=IwAR3fRxRkrq-S7z1miVQKr41r3t-uuHHu30I5oPVozm8mN2V_PkieJMC4vE8');
+            const response = await fetch('https://server-ptudw.onrender.com/api/placeAds?fbclid=IwAR3fRxRkrq-S7z1miVQKr41r3t-uuHHu30I5oPVozm8mN2V_PkieJMC4vE8');
+            // const response = await fetch('http://localhost:5000/api/placeAds?fbclid=IwAR3fRxRkrq-S7z1miVQKr41r3t-uuHHu30I5oPVozm8mN2V_PkieJMC4vE8');
             const data = await response.json();
             return data.data;
         } catch (error) {
@@ -364,14 +364,14 @@ async function createReportForm(address, idPlace, idAd) {
             formData.append("idad", formdata[7].value);
             formData.append("image", quill.getContents().ops.filter((about) => about.insert.image).map((about) => about.insert.image));
             formData.append("context", quill.getContents().ops.filter((about) => !about.insert.image).map((about) => about.insert));
-            // await fetch('https://server-ptudw.onrender.com/api/report', {
-            //     method: 'POST',
-            //     body: formData,
-            // })
-            await fetch('http://localhost:5000/api/report', {
+            await fetch('https://server-ptudw.onrender.com/api/report', {
                 method: 'POST',
                 body: formData,
             })
+            // await fetch('http://localhost:5000/api/report', {
+            //     method: 'POST',
+            //     body: formData,
+            // })
 
             const filteredData = formdata.filter(item => {
                 const allowedNames = ['display_name', 'email', 'phone_number', 'location', 'time'];
