@@ -26,35 +26,13 @@
         <button onclick="window.location.href='/licensing/view'" style="margin-top: 12px;" class="btn btn-success">
             Licensing</button>
         {{#if (eq "admin" role)}}
-            <button onclick="window.location.href='/auth/create-account-district'" style="margin-top: 12px;"
-                class="btn btn-primary">
-                Create account district</button>
-            <button onclick="window.location.href='/auth/create-account-ward'" style="margin-top: 12px;"
-                class="btn btn-primary">
-                Create account ward</button>
+        <button onclick="window.location.href='/auth/create-account-district'" style="margin-top: 12px;"
+            class="btn btn-primary">
+            Create account district</button>
+        <button onclick="window.location.href='/auth/create-account-ward'" style="margin-top: 12px;"
+            class="btn btn-primary">
+            Create account ward</button>
         {{/if}}
 
-        <div id="map" style="margin-top: 12px;"></div>
+        <div id="map" class="active" style="margin-top: 12px;"></div>
     </div>
-
-    <script>
-
-        $(document).ready(async function () {
-            var map = L.map("map")
-            navigator.geolocation.getCurrentPosition(function (position) {
-                var lat = position.coords.latitude;
-                var lon = position.coords.longitude;
-                map.setView([lat, lon], 13);
-            });
-
-            L.tileLayer(
-                "https://{s}.tile.thunderforest.com/atlas/{z}/{x}/{y}.png?apikey=a1cb0032c1264a8d9a88251c4866a2c3",
-                {
-                    attribution: "&copy; OpenStreetMap contributors, &copy; Thunderforest",
-                    apikey: "a1cb0032c1264a8d9a88251c4866a2c3",
-                }
-            ).addTo(map);
-
-        });
-
-    </script>

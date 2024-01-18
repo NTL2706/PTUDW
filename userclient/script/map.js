@@ -92,7 +92,7 @@ $(document).ready(async function () {
     var previousMarkerState = null
 
     function handleMarkerClick(newMarker, marker) {
-        console.log(marker._id)
+
         const thongtinAd = `
   <div class="informflex">
     <div class="flex">

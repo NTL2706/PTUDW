@@ -15,7 +15,6 @@ async function viewReport(req, res) {
 
     try {
         let filter = {}
-        console.log(user)
         if (user.role == "ward") {
             const ward_user = await wardModel.findById(user.option.ward);
             filter.ward = ward_user.name.toLowerCase();
@@ -24,7 +23,6 @@ async function viewReport(req, res) {
             const district_user = await districtModel.findById(user.option.district);
             filter.district = district_user.name.toLowerCase();
         }
-        console.log(filter)
 
         const report = await reportModel.find(filter).lean()
             .sort({ created_at: -1 })
