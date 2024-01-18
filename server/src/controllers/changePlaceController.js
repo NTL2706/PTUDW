@@ -4,6 +4,7 @@ import { pagination } from "../utils/pagination.js";
 import moment from 'moment';
 import { adsModel } from "../models/adsModel.js";
 import { placeModel } from "../models/placeModel.js";
+import { getIO } from "../socket.js";
 
 async function viewPlace(req, res, next) {
     const page = req.query.page || 1;
@@ -134,9 +135,12 @@ async function approvePlace(req, res) {
             ads: data.ads,
         };
 
-
         await placeModel.findByIdAndUpdate(data.idChange, dataUpdate);
         await placeChangeModel.findByIdAndUpdate(idPlace, { active: true });
+
+        const io = getIO()
+        io.emit(`check`, "OKE");
+
         return res.redirect("/change/viewPlace")
     } catch (error) {
         console.log(error);

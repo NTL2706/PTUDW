@@ -118,3 +118,26 @@
             </div>
             <button onclick="window.history.back()" class="btn btn-secondary">Back</button>
         </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+
+        <div class="modal fade" id="popupModal" tabindex="-1" role="dialog" aria-labelledby="popupModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="alert alert-primary alert-dismissible" role="alert" style="margin: 0;">
+                        Data update, please reset page
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            var socket = io.connect('localhost:3000');
+            socket.on('check', function (message) {
+                console.log(message);
+                $("#popupModal").modal("show");
+            });
+        </script>
