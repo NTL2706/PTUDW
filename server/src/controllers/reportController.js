@@ -21,7 +21,7 @@ async function viewReport(req, res) {
             filter.ward = ward_user.name.toLowerCase();
         }
         else if (user.role == "district") {
-            const district_user = await districtModel.findById(user.option.ward);
+            const district_user = await districtModel.findById(user.option.district);
             filter.district = district_user.name.toLowerCase();
         }
         console.log(filter)
@@ -102,7 +102,7 @@ async function editReport(req, res) {
     if (data.status) {
         dataUpdate.status = data.status
         // todo: send mail
-        sendMail(user.email, "Update report status", `Currently the report is in a status of ${data.status}`)
+        sendMail(data.email, "Update report status", `Currently the report is in a status of ${data.status}`)
     }
 
     try {

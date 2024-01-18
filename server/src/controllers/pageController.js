@@ -8,4 +8,5 @@ export async function homePage(req, res) {
         const districts = await districtModel.find().lean().select('_id name');
         res.render("index", { districts, name: req.user.name, role: req.user.role });
     }
+
 }

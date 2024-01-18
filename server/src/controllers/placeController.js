@@ -71,6 +71,19 @@ async function editPlace(req, res, next) {
     if (!user) {
         return res.redirect("/auth/login");
     }
+    if (dataUpdate.ads) {
+        if (Array.isArray(dataUpdate.ads))
+            dataUpdate.ads = dataUpdate.ads.map(adId => {
+                return {
+                    ad: adId,
+                    quantity: 1
+                };
+            })
+        else dataUpdate.ads = {
+            ad: dataUpdate.ads,
+            quantity: 1
+        }
+    }
 
     try {
         await placeModel.findByIdAndUpdate(idPlace, dataUpdate);
@@ -90,8 +103,8 @@ async function deletePlace(req, res, next) {
     }
 
     try {
-        await adsModel.findByIdAndDelete(idAds);
-        return res.redirect(`/ads/view`);
+        await placeModel.findByIdAndDelete(idAds);
+        return res.redirect(`/place/view`);
     } catch (error) {
         console.log(error);
         return res.redirect("/ads/view");
@@ -106,13 +119,21 @@ async function createPlace(req, res, next) {
         lon: data.lon,
         lat: data.lat,
         type: data.type,
-        ads: data.ads.map(adId => {
-            return {
-                ad: adId,
-                quantity: 1
-            };
-        }),
         ward: data.option
+    }
+    console.log(data)
+    if (data.ads) {
+        if (Array.isArray(data.ads))
+            dataInsert.ads = data.ads.map(adId => {
+                return {
+                    ad: adId,
+                    quantity: 1
+                };
+            })
+        else dataInsert.ads = {
+            ad: data.ads,
+            quantity: 1
+        }
     }
 
     try {

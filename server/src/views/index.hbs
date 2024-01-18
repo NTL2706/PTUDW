@@ -4,74 +4,37 @@
 <div class="content-wrapper">
     <div class="container-xxl flex-grow-1 container-p-y">
         <h4 class="py-3 mb-4">
-            <span class="text-muted fw-light">Tables /</span> Basic Tables
+            <span class="text-muted fw-light">Menu dashboard
         </h4>
 
-
-
-        <!-- Basic Bootstrap Table -->
-        <div class="card">
-            <h5 class="card-header">Danh sách quận</h5>
-            <div class="table-responsive text-nowrap">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Id</th>
-                            <th>Name</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody class="table-border-bottom-0">
-                        {{#each districts}}
-                        <tr>
-                            <td>
-                                <i class="mdi mdi-basketball mdi-20px text-info me-3"></i><span
-                                    class="fw-medium">{{_id}}</span>
-                            </td>
-                            <td>{{name}}</td>
-
-
-                            <td style="text-align: end;">
-                                <div class="dropdown">
-                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
-                                        data-bs-toggle="dropdown">
-                                        <i class="mdi mdi-dots-vertical"></i>
-                                    </button>
-
-                                    <div class="dropdown-menu">
-                                        <a class="dropdown-item" href="/cb/viewWard?id={{this._id}}"><i
-                                                class="mdi mdi-view-array-outline me-1"></i>
-                                            View ward</a>
-                                        <a class="dropdown-item" href="/cb/editDistrict?id={{this._id}}"><i
-                                                class="mdi mdi-pencil-outline me-1"></i>
-                                            Edit</a>
-                                        <a class="dropdown-item" href="/cb/deleteDistrict?id={{this._id}}"><i
-                                                class="mdi mdi-trash-can-outline me-1"></i>
-                                            Delete</a>
-                                    </div>
-
-                                </div>
-                            </td>
-                        </tr>
-                        {{/each}}
-                    </tbody>
-                </table>
-
-            </div>
-        </div>
         <button onclick=" document.getElementById('map').classList.toggle('active')" style="margin-top: 12px;"
-            class="btn btn-warning">Hiện maps</button>
-        <button onclick="window.location.href='/cb/create-district'" style="margin-top: 12px;"
-            class="btn btn-primary">Thêm Quận</button>
-        <button onclick="window.location.href='/cb/create-ward'" style="margin-top: 12px;" class="btn btn-primary">Thêm
-            Phường</button>
-        <button onclick="window.location.href='/ads/view'" style="margin-top: 12px;" class="btn btn-info">Các loại
-            bảng quảng cáo</button>
+            class="btn btn-warning">View maps</button>
+        <button onclick="window.location.href='/cb/viewDistrict'" style="margin-top: 12px;"
+            class="btn btn-primary">Ward/district management</button>
+        <button onclick="window.location.href='/ads/view'" style="margin-top: 12px;" class="btn btn-primary">
+            Ads management</button>
+        <button onclick="window.location.href='/place/view'" style="margin-top: 12px;" class="btn btn-primary">
+            Place ads management</button>
+        <button onclick="window.location.href='/report/view'" style="margin-top: 12px;"
+            class="btn btn-info">Report</button>
 
+        <button onclick="window.location.href='/change/viewAds'" style="margin-top: 12px;" class="btn btn-primary">
+            Granting edit ads</button>
 
+        <button onclick="window.location.href='/change/viewPlace'" style="margin-top: 12px;" class="btn btn-primary">
+            Granting edit place</button>
+        <button onclick="window.location.href='/licensing/view'" style="margin-top: 12px;" class="btn btn-success">
+            Licensing</button>
+        {{#if (eq "admin" role)}}
+            <button onclick="window.location.href='/auth/create-account-district'" style="margin-top: 12px;"
+                class="btn btn-primary">
+                Create account district</button>
+            <button onclick="window.location.href='/auth/create-account-ward'" style="margin-top: 12px;"
+                class="btn btn-primary">
+                Create account ward</button>
+        {{/if}}
 
         <div id="map" style="margin-top: 12px;"></div>
-
     </div>
 
     <script>

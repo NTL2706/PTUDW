@@ -39,13 +39,11 @@
                                     name="lat" />
                                 <label for="basic-default-company">Lat</label>
                             </div>
+
                             <div class="form-floating form-floating-outline mb-4">
-                                <select class="form-select" id="exampleFormControlSelect1"
-                                    aria-label="Default select example" name="ads">
-                                    <option value="{{placeAds.ads._id}}" selected>{{placeAds.ads.type}}-
-                                        id:
-                                        {{placeAds.ads._id}}
-                                    </option>
+                                <select multiple class="form-select h-px-100" id="exampleFormControlSelect2"
+                                    aria-label="Multiple select example" name="ads">
+
                                     {{#each advertisements}}
                                         <option value="{{this._id}}">{{this.type}}
                                             - id:
@@ -53,9 +51,10 @@
                                         </option>
                                     {{/each}}
                                 </select>
-                                <label for="exampleFormControlSelect1">Open this select
-                                    advertising sign</label>
+                                <label for="exampleFormControlSelect2">Open this select advertising
+                                    sign</label>
                             </div>
+
 
                             <button type="submit" class="btn btn-primary">
                                 Create
